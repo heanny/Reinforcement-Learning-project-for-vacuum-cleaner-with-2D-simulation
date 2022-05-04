@@ -22,11 +22,40 @@ def init_values(n_rows, n_cols):
     return np.full((n_rows, n_cols), 0)
 
 # policy iteration algorithm
-def policy_evaluation(dirs, rewards, values, policy):
-    value = np.full(rewards.shape, 0)
-    return value
+def policy_evaluation(dirs, rewards, values, policy,gamma=1.0, theta=1e-9, max_iterations=1e9):
+    evaluation_iterations = 1
+    rows = rewards.shape[0]
+    cols = rewards.shape[1]
+    # Repeat until change in value is below the threshold
+    for l in range(int(max_iterations)):
+        # Initialize a change of value function as zero
+        delta = 0
+        # Iterate though each state
+        for i in range(rows):
+            for j in range(cols):
+                # Initial a new value of current state
+                v = 0
+                # Look at the possible next actions
+                # dir_list=list(policy[i][j])
+                for key in policy[i][j].keys():
+                    # Look at the possible next states for each action
+                    action_prob=policy[i][j].get(key)
+                    row=i+dirs.get(key)[0]
+                    col=j+dirs.get(key)[1]
+                    v += action_prob*(rewards[i][j]+gamma*values[row][col])
+                    print(v)
+                # Calculate the absolute change of value function
+                delta = max(delta, np.abs(values[i][j] - v))
+                # Update value function
+                values[i][j] = v
+        evaluation_iterations += 1
 
-def policy_improvement(dirs, rewards, values, policy):
+        # Terminate if value change is insignificant
+        if delta < theta:
+            print(f'Policy evaluated in {evaluation_iterations} iterations.')
+            return values
+
+def policy_improvement(dirs, rewards, values, policy,gamma=1.0):
     policy_stable = True
     n_rows = rewards.shape[0]
     n_cols = rewards.shape[1]
@@ -47,7 +76,7 @@ def policy_improvement(dirs, rewards, values, policy):
                     next_j = n_cols - 1
                 if next_j < 0:
                     next_j = 0
-                action_values[action] = rewards[next_i][next_j] + values[next_i][next_j]
+                action_values[action] = rewards[next_i][next_j] + gamma*values[next_i][next_j]
             # get the highest Q(s,a) for every s
             max_action_value = [key for m in [max(action_values.values())] for key, val in action_values.items() if val == m]
             # change the policy of state i, j
@@ -71,7 +100,7 @@ def policy_iteration(robot):
     policy_stable = False
     # do iteration
     while not policy_stable:
-        values = policy_evaluation(dirs, rewards, values, policy)
+        values = policy_evaluation(dirs, rewards, values, policy,gamma=1.0, theta=1e-9, max_iterations=1e9)
         policy, policy_stable = policy_improvement(dirs, rewards, values, policy)
     return policy
 
