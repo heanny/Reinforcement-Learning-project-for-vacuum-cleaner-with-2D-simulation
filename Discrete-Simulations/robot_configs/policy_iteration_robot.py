@@ -22,7 +22,12 @@ def get_current_rewards(cells,transformation):
     max_value = np.max(reward)
     if max_value < 1:
         reward[reward == -3] = 3
-    return reward+transformation
+    # rounded=np.round_(transformation,0)
+    # print(rounded)
+    combined_reward=reward+transformation
+    # combined_reward= combined_reward.astype(int)
+    # print(combined_reward)
+    return combined_reward
 
 def init_values(n_rows, n_cols):
     return np.full((n_rows, n_cols), 0)
@@ -55,7 +60,9 @@ def policy_evaluation(dirs, rewards, values, policy,gamma=1.0, theta=1, max_iter
                 # Calculate the absolute change of value function
                 delta = max(delta, np.abs(values[i][j] - v))
                 # Update value function
-                values[i][j] = v
+                # print(rewards)
+                # print(v)
+                values[i][j] = int(v)
         evaluation_iterations += 1
         # Terminate if value change is insignificant
         if delta < theta:
@@ -107,7 +114,7 @@ def policy_iteration(robot,transformation):
     policy_stable = False
     # do iteration
     while not policy_stable:
-        values = policy_evaluation(dirs, rewards, values, policy, gamma=0, theta=3, max_iterations=1e9)
+        values = policy_evaluation(dirs, rewards, values, policy, gamma=1, theta=20, max_iterations=1e9)
         policy, policy_stable = policy_improvement(dirs, rewards, values, policy, gamma=1)
     return policy
 
@@ -123,10 +130,14 @@ def robot_epoch(robot):
         n_cols = robot.grid.n_rows
         n_rows = robot.grid.n_cols
         global history
-        history = np.full((n_cols, n_rows),0.0)
+        history = np.full((n_rows, n_cols),0.0)
         # print(history)
     e = np.finfo(float).eps
-    transformation = np.where(history==0, history, e**(-history+1)-1)
+    # print(history)
+    history_updated=np.where(history<99,history,99)
+    transformation = np.where(history==0, history, -0.01*history)
+    # (e**(-history+1))-1
+    # print(transformation)
     # get current state's optimal policy
     optimal_policy = policy_iteration(robot,transformation)
     policy_of_current_pos = optimal_policy[robot.pos[0]][robot.pos[1]]
@@ -135,18 +146,8 @@ def robot_epoch(robot):
         # If we don't have the wanted orientation, rotate clockwise until we do:
         robot.rotate('r')
 
-    # next_pos = np.array(robot.pos) + np.array(robot.dirs[direction])
-    # #print(next_pos)
-    # history[next_pos[0]][next_pos[1]] += 1
-    # print(history)
-    # e = np.finfo(float).eps
-    # history = np.where(history==0, history, e**(-history+1)-1)
-    # print(history)
-
     # Move:
     position=robot.pos
     history[position[0]][position[1]] += 1
+    # print(history)
     robot.move()
-    # next_pos = np.array(robot.pos) + np.array(robot.dirs[direction])
-    #print(next_pos)
-    #print(history)
