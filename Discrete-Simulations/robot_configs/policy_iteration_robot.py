@@ -11,15 +11,15 @@ def init_policy(n_rows, n_cols):
 def get_current_rewards(cells):
     reward = copy.deepcopy(cells)
     reward[reward < -2] = 0
+    reward[reward == -2] = -1
     reward[reward == 3] = -3
+    max_value = np.max(reward)
+    if max_value < 1:
+        reward[reward == -3] = 3
     return reward
 
 def init_values(n_rows, n_cols):
     return np.full((n_rows, n_cols), 0)
-
-# def init_action_values(n_rows, n_cols):
-#     d = {'n': 0, 'e': 0, 's': 0, 'w': 0}
-#     return np.full((n_rows, n_cols), d)
 
 # policy iteration algorithm
 def policy_evaluation(dirs, rewards, values, policy):
@@ -38,13 +38,13 @@ def policy_improvement(dirs, rewards, values, policy):
             # calculate Q(s,a)
             for action in dirs:
                 next_i = i + dirs[action][0]
-                if next_i > 11:
-                    next_i = 11
+                if next_i > n_rows - 1:
+                    next_i = n_rows - 1
                 if next_i < 0:
                     next_i = 0
                 next_j = j + dirs[action][1]
-                if next_j > 11:
-                    next_j = 11
+                if next_j > n_cols - 1:
+                    next_j = n_cols - 1
                 if next_j < 0:
                     next_j = 0
                 action_values[action] = rewards[next_i][next_j] + values[next_i][next_j]
@@ -70,7 +70,7 @@ def policy_iteration(robot):
     dirs = robot.dirs
     policy_stable = False
     # do iteration
-    if not policy_stable:
+    while not policy_stable:
         values = policy_evaluation(dirs, rewards, values, policy)
         policy, policy_stable = policy_improvement(dirs, rewards, values, policy)
     return policy
@@ -91,10 +91,3 @@ def robot_epoch(robot):
         robot.rotate('r')
     # Move:
     robot.move()
-
-    # if find_optimal_policy:
-    #     optimal_policy = policy_iteration(robot)
-    #     find_optimal_policy = False
-    # else:
-        # print(robot.grid.cells)
-        # pass
