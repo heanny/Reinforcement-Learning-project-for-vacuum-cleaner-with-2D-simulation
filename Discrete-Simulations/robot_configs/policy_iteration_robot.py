@@ -39,10 +39,10 @@ def policy_evaluation(dirs, rewards, values, policy,gamma=1.0, theta=1, max_iter
                 # dir_list=list(policy[i][j])
                 for key in policy[i][j].keys():
                     # Look at the possible next states for each action
-                    action_prob=policy[i][j].get(key)
-                    row = i+dirs.get(key)[0]
-                    col = j+dirs.get(key)[1]
-                    if not (row<int(rows) and col <int(col)):
+                    action_prob = policy[i][j].get(key)
+                    row = i+dirs.get(key)[1]
+                    col = j+dirs.get(key)[0]
+                    if not (row < int(rows) and col < int(col)):
                         row = i
                         col = j
                     v += action_prob * (rewards[i][j] + gamma * values[row][col])
@@ -92,8 +92,8 @@ def policy_improvement(dirs, rewards, values, policy,gamma=1.0):
 
 def policy_iteration(robot):
     # initialize parameters
-    n_rows = robot.grid.n_rows
-    n_cols = robot.grid.n_cols
+    n_cols = robot.grid.n_rows
+    n_rows = robot.grid.n_cols
     policy = init_policy(n_rows, n_cols)
     rewards = get_current_rewards(robot.grid.cells)
     values = init_values(n_rows, n_cols)
@@ -101,8 +101,8 @@ def policy_iteration(robot):
     policy_stable = False
     # do iteration
     while not policy_stable:
-        values = policy_evaluation(dirs, rewards, values, policy,gamma=1.0, theta=5, max_iterations=1e9)
-        policy, policy_stable = policy_improvement(dirs, rewards, values, policy)
+        values = policy_evaluation(dirs, rewards, values, policy, gamma=0, theta=3, max_iterations=1e9)
+        policy, policy_stable = policy_improvement(dirs, rewards, values, policy, gamma=1)
     return policy
 
 
