@@ -11,7 +11,7 @@ def init_policy(n_rows, n_cols):
     policy = np.full((n_rows, n_cols), d)
     return policy
 
-def get_current_rewards(cells):
+def get_current_rewards(cells,transformation):
     reward = copy.deepcopy(cells)
     reward[reward < -2] = 0
     reward[reward == -2] = -1
@@ -19,13 +19,15 @@ def get_current_rewards(cells):
     max_value = np.max(reward)
     if max_value < 1:
         reward[reward == -3] = 3
-    return reward
+    return reward+transformation
 
 
-def Value_iteration(n,gamma,robot):
+def Value_iteration(n,gamma,robot,transformation):
     dirs = robot.dirs
-    rewards = get_current_rewards(robot.grid.cells)
-    threshold = 1e-30
+    rewards = get_current_rewards(robot.grid.cells,transformation)
+    # print(rewards)
+
+    threshold = 1e-20
 
     rewards_n_rows = rewards.shape[0]
     rewards_n_cols = rewards.shape[1]
@@ -79,12 +81,35 @@ def Value_iteration(n,gamma,robot):
 
 
 def robot_epoch(robot):
+    if not any(robot.history):
+        # print("no history")
+        n_cols = robot.grid.n_rows
+        n_rows = robot.grid.n_cols
+        global history
+        history = np.full((n_rows, n_cols),0.0)
+        # print(history)
+    # e = np.finfo(float).eps
+    transformation = np.where(history==0, history, -0.01*history)
+    # print(transformation)
+
     # get current state's optimal policy
-    optimal_policy = Value_iteration(1000,1,robot)
+    optimal_policy = Value_iteration(1000,1,robot,np.round(transformation,5))
     policy_of_current_pos = optimal_policy[robot.pos[0]][robot.pos[1]]
     direction = random.choices(list(policy_of_current_pos.keys()), weights=policy_of_current_pos.values(), k=1)[0]
     while direction != robot.orientation:
         # If we don't have the wanted orientation, rotate clockwise until we do:
         robot.rotate('r')
+
+    # next_pos = np.array(robot.pos) + np.array(robot.dirs[direction])
+    # #print(next_pos)
+    # history[next_pos[0]][next_pos[1]] += 1
+    # print(history)
+    # e = np.finfo(float).eps
+    # history = np.where(history==0, history, e**(-history+1)-1)
+    # print(history)
+
     # Move:
+    position=robot.pos
+    history[position[0]][position[1]] += 1
+    # print(history)
     robot.move()
