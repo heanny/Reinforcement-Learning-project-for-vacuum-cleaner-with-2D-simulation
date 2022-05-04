@@ -22,7 +22,7 @@ def init_values(n_rows, n_cols):
     return np.full((n_rows, n_cols), 0)
 
 # policy iteration algorithm
-def policy_evaluation(dirs, rewards, values, policy,gamma=1.0, theta=1e-9, max_iterations=1e9):
+def policy_evaluation(dirs, rewards, values, policy,gamma=1.0, theta=1, max_iterations=1e9):
     evaluation_iterations = 1
     rows = rewards.shape[0]
     cols = rewards.shape[1]
@@ -40,16 +40,17 @@ def policy_evaluation(dirs, rewards, values, policy,gamma=1.0, theta=1e-9, max_i
                 for key in policy[i][j].keys():
                     # Look at the possible next states for each action
                     action_prob=policy[i][j].get(key)
-                    row=i+dirs.get(key)[0]
-                    col=j+dirs.get(key)[1]
-                    v += action_prob*(rewards[i][j]+gamma*values[row][col])
-                    print(v)
+                    row = i+dirs.get(key)[0]
+                    col = j+dirs.get(key)[1]
+                    if not (row<int(rows) and col <int(col)):
+                        row = i
+                        col = j
+                    v += action_prob * (rewards[i][j] + gamma * values[row][col])
                 # Calculate the absolute change of value function
                 delta = max(delta, np.abs(values[i][j] - v))
                 # Update value function
                 values[i][j] = v
         evaluation_iterations += 1
-
         # Terminate if value change is insignificant
         if delta < theta:
             print(f'Policy evaluated in {evaluation_iterations} iterations.')
@@ -100,7 +101,7 @@ def policy_iteration(robot):
     policy_stable = False
     # do iteration
     while not policy_stable:
-        values = policy_evaluation(dirs, rewards, values, policy,gamma=1.0, theta=1e-9, max_iterations=1e9)
+        values = policy_evaluation(dirs, rewards, values, policy,gamma=1.0, theta=5, max_iterations=1e9)
         policy, policy_stable = policy_improvement(dirs, rewards, values, policy)
     return policy
 
