@@ -1,6 +1,6 @@
 # Import our robot algorithm to use in this simulation:
 import robot_configs.policy_iteration_robot as policy
-import robot_configs.value_robot as value
+import robot_configs.value_iteration_robot as value
 import pickle
 from environment import Robot
 import matplotlib.pyplot as plt
