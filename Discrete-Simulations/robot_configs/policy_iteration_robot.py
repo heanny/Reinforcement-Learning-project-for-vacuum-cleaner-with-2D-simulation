@@ -134,7 +134,7 @@ def robot_epoch(robot):
         # print(history)
     e = np.finfo(float).eps
     # print(history)
-    history_updated=np.where(history<99,history,99)
+    history=np.where(history<99,history,99)
     transformation = np.where(history==0, history, -0.01*history)
     # (e**(-history+1))-1
     # print(transformation)

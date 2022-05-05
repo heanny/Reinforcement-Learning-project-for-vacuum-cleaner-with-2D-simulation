@@ -27,7 +27,7 @@ def Value_iteration(n,gamma,robot,transformation):
     rewards = get_current_rewards(robot.grid.cells,transformation)
     # print(rewards)
 
-    threshold = 1e-20
+    threshold = 5
 
     rewards_n_rows = rewards.shape[0]
     rewards_n_cols = rewards.shape[1]
@@ -44,7 +44,7 @@ def Value_iteration(n,gamma,robot,transformation):
     #start iteration
     for k in range(n):
         # create null state value table
-        update_value_table = np.copy(value_table)
+        update_value_table = init_values(grid_n_rows, grid_n_cols)
         #traverse all states
         for i in range(0, rewards_n_rows):
             for j in range(0, rewards_n_cols):
@@ -62,20 +62,20 @@ def Value_iteration(n,gamma,robot,transformation):
                         next_j = rewards_n_cols - 1
                     if next_j < 0:
                         next_j = 0
+                    action_value[action] = rewards[next_i][next_j] + gamma * value_table[next_i][next_j]
 
-
-                    action_value[action] = rewards[next_i][next_j] + gamma * 1 * update_value_table[next_i][next_j]
-
+                update_value_table[i][j] = action_value[max(action_value)]
                 max_action_value = [key for m in [max(action_value.values())] for key, val in action_value.items() if
                                     val == m]
-                # print(max_action_value)
                 new_policy = {'n': 0, 'e': 0, 's': 0, 'w': 0}
                 probability = 1 / len(max_action_value)
                 for action in max_action_value:
                     new_policy[action] = probability
                 policy[i][j] = new_policy
-        if np.sum((np.fabs(update_value_table - value_table))) <= threshold:
+        if np.max((np.fabs(update_value_table - value_table))) < threshold:
             break
+        else:
+            value_table = update_value_table
 
     return policy
 
@@ -89,6 +89,7 @@ def robot_epoch(robot):
         history = np.full((n_rows, n_cols),0.0)
         # print(history)
     # e = np.finfo(float).eps
+    history = np.where(history < 99, history, 99)
     transformation = np.where(history==0, history, -0.01*history)
     # print(transformation)
 
