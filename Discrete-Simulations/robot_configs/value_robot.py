@@ -43,7 +43,6 @@ def get_current_rewards(cells,transformation):
         reward[reward == -3] = 3
     return reward+transformation
 
-
 def Value_iteration(n,gamma,robot,transformation):
     """
     When the value function converges, end the iteration to return the best policy.
@@ -134,5 +133,4 @@ def robot_epoch(robot):
     # Move:
     position = robot.pos
     history[position[0]][position[1]] += 1
-    # print(history)
     robot.move()
