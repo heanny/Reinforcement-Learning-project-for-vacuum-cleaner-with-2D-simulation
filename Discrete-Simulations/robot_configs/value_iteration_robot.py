@@ -4,14 +4,36 @@ import copy
 
 
 def init_values(n_rows, n_cols):
+    """
+    Initialize the value matrix, where each element is a value used to evaluate a state.
+    We initialize value of each state with 0.
+    :param n_rows: number of rows in the grid
+    :param n_cols: number of columns in the grid
+    :returns policy: the value matrix
+    """
+
     return np.full((n_rows, n_cols), 0)
 
 def init_policy(n_rows, n_cols):
+    """
+    Initialize the policy matrix, where each element is a dictionary that shows
+    the probability of moving in a certain direction in a given state.
+    We initialize each direction with a probability of 1 in 4.
+    :param n_rows: number of rows in the grid
+    :param n_cols: number of columns in the grid
+    :returns policy: the policy matrix
+    """
     d = {'n': 0.25, 'e': 0.25, 's': 0.25, 'w': 0.25}
     policy = np.full((n_rows, n_cols), d)
     return policy
 
 def get_current_rewards(cells,transformation):
+    """
+    Get the reward matrix based on grid's current circumstances(each tile's label) and robot's history.
+    :param cells: cells attribute of robot.grid, a matrix record the label of each tile
+    :param transformation: a punishment matrix, where each element is the punishment of each tile
+    :returns combined_reward: a reward matrix
+    """
     reward = copy.deepcopy(cells)
     reward[reward < -2] = 0
     reward[reward == -2] = -1
@@ -21,37 +43,42 @@ def get_current_rewards(cells,transformation):
         reward[reward == -3] = 3
     return reward+transformation
 
-
 def Value_iteration(n,gamma,robot,transformation):
+    """
+    When the value function converges, end the iteration to return the best policy.
+    :param n: the number of iterations
+    :param gamma: discount factor
+    :param robot: robot
+    :param transformation: a punishment matrix, where each element is the punishment of each tile
+    """
+    # get directions of robot
     dirs = robot.dirs
+    # get reward matrix
     rewards = get_current_rewards(robot.grid.cells,transformation)
-    # print(rewards)
 
-    threshold = 5
+    # set the value of theta
+    theta = 5
 
     rewards_n_rows = rewards.shape[0]
     rewards_n_cols = rewards.shape[1]
-    # grid_n_rows = robot.grid.n_rows
-    # grid_n_cols = robot.grid.n_cols
+
     grid_n_cols = robot.grid.n_rows
     grid_n_rows = robot.grid.n_cols
 
-    # value_table = init_values(grid_n_rows, grid_n_cols)
-    # policy = init_policy(grid_n_rows, grid_n_cols)
     value_table = init_values(grid_n_rows, grid_n_cols)
     policy = init_policy(grid_n_rows, grid_n_cols)
 
-    #start iteration
+    # start iteration
     for k in range(n):
         # create null state value table
         update_value_table = init_values(grid_n_rows, grid_n_cols)
-        #traverse all states
+        # traverse all states
         for i in range(0, rewards_n_rows):
             for j in range(0, rewards_n_cols):
                 action_value = {'n': 0, 'e': 0, 's': 0, 'w': 0}
                 # traverse all actions
                 for action in dirs:
-                    # print(f"dirs:{action}")
+                    # Check if the boundary is reached
                     next_i = i + dirs[action][0]
                     if next_i > rewards_n_rows - 1:
                         next_i = rewards_n_rows - 1
@@ -62,8 +89,10 @@ def Value_iteration(n,gamma,robot,transformation):
                         next_j = rewards_n_cols - 1
                     if next_j < 0:
                         next_j = 0
+                    # iteration equation
                     action_value[action] = rewards[next_i][next_j] + gamma * value_table[next_i][next_j]
 
+                # update the value table by the max value of action values
                 update_value_table[i][j] = action_value[max(action_value)]
                 max_action_value = [key for m in [max(action_value.values())] for key, val in action_value.items() if
                                     val == m]
@@ -72,7 +101,9 @@ def Value_iteration(n,gamma,robot,transformation):
                 for action in max_action_value:
                     new_policy[action] = probability
                 policy[i][j] = new_policy
-        if np.max((np.fabs(update_value_table - value_table))) < threshold:
+
+        # Check for convergence
+        if np.max((np.fabs(update_value_table - value_table))) < theta:
             break
         else:
             value_table = update_value_table
@@ -82,16 +113,14 @@ def Value_iteration(n,gamma,robot,transformation):
 
 def robot_epoch(robot):
     if not any(robot.history):
-        # print("no history")
+
         n_cols = robot.grid.n_rows
         n_rows = robot.grid.n_cols
         global history
         history = np.full((n_rows, n_cols),0.0)
-        # print(history)
-    # e = np.finfo(float).eps
+
     history = np.where(history < 99, history, 99)
     transformation = np.where(history==0, history, -0.01*history)
-    # print(transformation)
 
     # get current state's optimal policy
     optimal_policy = Value_iteration(1000,1,robot,np.round(transformation,5))
@@ -101,16 +130,7 @@ def robot_epoch(robot):
         # If we don't have the wanted orientation, rotate clockwise until we do:
         robot.rotate('r')
 
-    # next_pos = np.array(robot.pos) + np.array(robot.dirs[direction])
-    # #print(next_pos)
-    # history[next_pos[0]][next_pos[1]] += 1
-    # print(history)
-    # e = np.finfo(float).eps
-    # history = np.where(history==0, history, e**(-history+1)-1)
-    # print(history)
-
     # Move:
-    position=robot.pos
+    position = robot.pos
     history[position[0]][position[1]] += 1
-    # print(history)
     robot.move()
