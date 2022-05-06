@@ -24,7 +24,7 @@ def get_current_rewards(cells, transformation):
     :returns combined_reward: a reward matrix
     """
     reward = copy.deepcopy(cells)
-    # label < -2L: this tile has a robot with different direction inside it. We set it to 0, meaning it is already clean.
+    # label < -2: this tile has a robot with different direction inside it. We set it to 0, meaning it is already clean.
     reward[reward < -2] = 0
     # label -2: this tile is an obstacle, we think they have the same function of wall tiles, so we reset as -1
     reward[reward == -2] = -1
