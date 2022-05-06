@@ -107,12 +107,13 @@ def policy_improvement(dirs, rewards, values, policy, gamma=1.0):
     policy_stable = True
     n_rows = rewards.shape[0]
     n_cols = rewards.shape[1]
-    # action_values = init_action_values(n_rows, n_cols)
+    # iterate over each state
     for i in range(0, n_rows):
         for j in range(0, n_cols):
+            # store the old policy
             old_policy = policy[i][j]
             action_values = {'n': 0, 'e': 0, 's': 0, 'w': 0}
-            # calculate Q(s,a)
+            # iterate over each action in a given state, calculate Q(s,a)
             for action in dirs:
                 next_i = i + dirs[action][0]
                 if next_i > n_rows - 1:
@@ -125,19 +126,28 @@ def policy_improvement(dirs, rewards, values, policy, gamma=1.0):
                 if next_j < 0:
                     next_j = 0
                 action_values[action] = rewards[next_i][next_j] + gamma*values[next_i][next_j]
-            # get the highest Q(s,a) for every s
+            # get the highest Q(s,a) for every s, there could be more than 1 highest Q(s,a)
             max_action_value = [key for m in [max(action_values.values())] for key, val in action_values.items() if val == m]
             # change the policy of state i, j
             new_policy = {'n': 0, 'e': 0, 's': 0, 'w': 0}
             probability = 1/len(max_action_value)
             for action in max_action_value:
                 new_policy[action] = probability
+            # compare to old policy to check if the policy change or not
             if not new_policy == old_policy:
                 policy_stable = False
                 policy[i][j] = new_policy
     return policy, policy_stable
 
 def policy_iteration(robot,transformation):
+    """
+    the main body of policy iteration algorithm
+
+    :param robot: robot
+    :param transformation: a punishment matrix, where each element is the punishment of each tile.
+     it will be use to calculate reward matrix.
+    :returns policy: the optimal policy
+    """
     # initialize parameters
     n_cols = robot.grid.n_rows
     n_rows = robot.grid.n_cols
@@ -146,17 +156,12 @@ def policy_iteration(robot,transformation):
     values = init_values(n_rows, n_cols)
     dirs = robot.dirs
     policy_stable = False
-    # do iteration
+    # start iteration
     while not policy_stable:
         values = policy_evaluation(dirs, rewards, values, policy, gamma=1, theta=20, max_iterations=1e9)
         policy, policy_stable = policy_improvement(dirs, rewards, values, policy, gamma=1)
     return policy
 
-
-# parameter initialization
-# global optimal_policy
-# global find_optimal_policy
-# find_optimal_policy = True
 
 def robot_epoch(robot):
     if not any(robot.history):
