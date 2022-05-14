@@ -28,27 +28,6 @@ def init_Qvalue_table(n_rows, n_cols):
     """
     return np.zeros((4,n_rows, n_cols))
 
-def get_current_rewards(cells):
-    """
-    Get the reward matrix based on grid's current circumstances(each tile's label) and robot's history.
-    :param cells: cells attribute of robot.grid, a matrix record the label of each tile
-    :param transformation: a punishment matrix, where each element is the punishment of each tile
-    :returns combined_reward: a reward matrix
-    """
-    reward = copy.deepcopy(cells)
-    # label < -2: this tile has a robot with different direction inside it. We set it to 0, meaning it is already clean.
-    reward[reward < -2] = 0
-    # label -2: this tile is an obstacle, we think they have the same function of wall tiles, so we reset as -1
-    reward[reward == -2] = -1
-    # label 3: death tile, give -3 to avoid robot reach it.
-    reward[reward == 3] = -3
-    max_value = np.max(reward)
-    if max_value < 1:
-        # After all the tiles have been cleared
-        # the robot must visit the death tile to terminate, so give it a high value 3
-        reward[reward == -3] = 3
-    return reward
-
 def simulation(robot, action, frequency):
     # get reward of action
     coordinate = robot.dirs[action]
