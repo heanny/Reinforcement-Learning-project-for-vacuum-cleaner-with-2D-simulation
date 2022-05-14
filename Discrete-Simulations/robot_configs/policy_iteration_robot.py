@@ -173,8 +173,8 @@ def robot_epoch(robot):
         n_rows = robot.grid.n_cols
         global history
         history = np.full((n_rows, n_cols),0.0)
-    e = np.finfo(float).eps
-    history=np.where(history<99,history,99)
+    
+    history = np.where(history<99,history,99)
     transformation = np.where(history==0, history, -0.01*history) # the range of each element is (-1,0]
     # get current state's optimal policy
     optimal_policy = policy_iteration(robot,transformation)
