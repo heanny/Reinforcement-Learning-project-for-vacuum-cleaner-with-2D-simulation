@@ -28,7 +28,7 @@ def init_Qvalue_table(n_rows, n_cols):
     """
     return np.zeros((4,n_rows, n_cols))
 
-def simulation(robot, action, frequency):
+def simulation(robot, action, transformation):
     # get reward of action
     coordinate = robot.dirs[action]
     possible_tiles = robot.possible_tiles_after_move()
@@ -45,11 +45,11 @@ def simulation(robot, action, frequency):
     robot.move()
     print("end move")
     # return the new state s' and reward
-    # if reward == 0:
-    #     reward = - frequency[robot.pos[0]][robot.pos[1]]*0.01
+    if reward == 0:
+        reward = transformation[robot.pos[0]][robot.pos[1]]
     return robot.pos, reward
 
-def Q_learning(robot, alpha, gamma, epsilon, episodes):
+def Q_learning(robot, transformation, alpha, gamma, epsilon, episodes):
     # initialize parameters
     n_cols = robot.grid.n_rows
     n_rows = robot.grid.n_cols
@@ -58,10 +58,10 @@ def Q_learning(robot, alpha, gamma, epsilon, episodes):
     directions = ['n', 'e', 's', 'w']
     direction_index_map = {'n':0, 'e':1, 's':2, 'w':3}
     frequency = np.zeros((n_rows, n_cols))
-    print("overall start")
     while episodes:
         robot_copy = copy.deepcopy(robot)
         while robot_copy.alive and np.max(robot_copy.grid.cells) > 0 and np.max(frequency) < 20:
+            print("+++++++++++++++++++++++ start +++++++++++++++++++++++++++++++")
             print(robot_copy.alive, np.max(robot_copy.grid.cells))
             # current state
             state = robot_copy.pos
@@ -75,7 +75,7 @@ def Q_learning(robot, alpha, gamma, epsilon, episodes):
 
             # simulate and get s' and r
             print("start simulation")
-            next_state, reward = simulation(robot_copy, action, frequency)
+            next_state, reward = simulation(robot_copy, action, transformation)
             print("end simulation")
             print(next_state, reward)
 
@@ -101,16 +101,33 @@ def Q_learning(robot, alpha, gamma, epsilon, episodes):
                 else:
                     policy[index, i, j] = smallest_probability
             print("new policy:", policy[:, i, j])
-
+            print("+++++++++++++++++++++++ end +++++++++++++++++++++++++++++++")
         episodes -= 1
     return policy
 
 def robot_epoch(robot):
     directions = ['n', 'e', 's', 'w']
-    optimal_policy = Q_learning(robot, 0.1, 1, 0.2, 500)
+
+    if not any(robot.history):
+        n_cols = robot.grid.n_rows
+        n_rows = robot.grid.n_cols
+        global history
+        history = np.full((n_rows, n_cols), 0.0)
+
+    history = np.where(history < 99, history, 99)
+    transformation = np.where(history == 0, history, -0.01 * history)  # the range of each element is (-1,0]
+
+    optimal_policy = Q_learning(robot, transformation, 0.1, 1, 0.4, 500)
     policy_of_current_state = optimal_policy[:, robot.pos[0], robot.pos[1]]
-    direction = choice(directions, p=policy_of_current_state)
-    # direction = directions[np.argmax(policy_of_current_state)]
+    indices = np.where(policy_of_current_state == np.max(policy_of_current_state))[0]
+    probability = []
+    for index in range(0, 4):
+        if index in indices:
+            probability.append(1/len(indices))
+        else:
+            probability.append(0)
+    direction = choice(directions, p=probability)
+    print(direction)
     while not direction == robot.orientation:
         # If we don't have the wanted orientation, rotate clockwise until we do:
         robot.rotate('r')
