@@ -69,13 +69,16 @@ class ModelFree:
         action_index = self.direction_index_map[action]
         old_Qvalue = self.Qvalue_table[action_index, state[0], state[1]]  # get Q(s,a)
         print("old Qvalue:", old_Qvalue)
-        next_state_Qvalues = self.Qvalue_table[:, next_state[0], next_state[1]]  # get all the Q(s',a)
-        next_state_max_Qvalue = max(next_state_Qvalues)  # get max Qvalue of s'
+ # get max Qvalue of s'
+
         if on_policy:
+            next_action_Qvalues = self.Qvalue_table[next_action, next_state[0], next_state[1]]
             self.Qvalue_table[action_index, state[0], state[1]] = old_Qvalue + alpha * (
-                        reward + gamma * next_state_max_Qvalue + old_Qvalue)
+                        reward + gamma * next_action_Qvalues - old_Qvalue)
         else:
-            self.Qvalue_table[action_index, state[0], state[1]] = old_Qvalue + alpha * (reward + gamma * next_state_max_Qvalue + old_Qvalue)
+            next_state_Qvalues = self.Qvalue_table[:, next_state[0], next_state[1]]  # get all the Q(s',a)
+            next_state_max_Qvalue = max(next_state_Qvalues)
+            self.Qvalue_table[action_index, state[0], state[1]] = old_Qvalue + alpha * (reward + gamma * next_state_max_Qvalue - old_Qvalue)
         print("new Qvalue:", self.Qvalue_table[action_index, state[0], state[1]])
 
     def update_policy(self, epsilon, state):
