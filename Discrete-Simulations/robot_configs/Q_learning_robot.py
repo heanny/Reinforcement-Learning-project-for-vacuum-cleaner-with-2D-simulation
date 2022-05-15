@@ -9,7 +9,7 @@ def Q_learning(model_free, alpha, gamma, epsilon, episodes):
         robot_copy = copy.deepcopy(model_free.robot)
         not_finished = True
         # enter an episode
-        while robot_copy.alive and not_finished and np.max(frequency) < 20:
+        while robot_copy.alive and not_finished and np.max(frequency) < 200:
             print("+++++++++++++++++++++++ start +++++++++++++++++++++++++++++++")
             print(robot_copy.alive, np.max(robot_copy.grid.cells))
             # current state
@@ -44,7 +44,7 @@ def Q_learning(model_free, alpha, gamma, epsilon, episodes):
 
 def robot_epoch(robot):
     model_free = ModelFree(robot)
-    optimal_policy = Q_learning(model_free, 0.1, 1, 0.2, 500)
+    optimal_policy = Q_learning(model_free, 0.1, 1, 0.4, 500)
     policy_of_current_state = optimal_policy[:, robot.pos[0], robot.pos[1]]
     indices = np.where(policy_of_current_state == np.max(policy_of_current_state))[0]
     probability = []
