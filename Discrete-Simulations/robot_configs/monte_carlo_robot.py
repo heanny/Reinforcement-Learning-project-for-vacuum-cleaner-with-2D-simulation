@@ -6,12 +6,12 @@ from collections import defaultdict
 
 # initialization function
 def init_Q(n_rows, n_cols,dirs):
-    return np.full((n_rows, n_cols,4),float('-inf'))
+    return np.full((4,n_rows, n_cols),float('-inf')) # TODO: initialize with 0 is bad because the value might be smaller than 0? Then the update ones 
 
 def make_epsilon_greedy_policy(n_rows,n_cols, Q, rewards,policy, num_actions=4,epsilon=0.1):
     def policy_for_state(i,j):
         A = np.ones(num_actions, dtype=float) * epsilon / num_actions
-        best_action = np.argmax(Q[i,j,:])
+        best_action = np.argmax(Q[:,i,j])
         A[best_action] += (1.0 - epsilon)
         return A
     
@@ -22,7 +22,7 @@ def make_epsilon_greedy_policy(n_rows,n_cols, Q, rewards,policy, num_actions=4,e
     return policy
     
 
-def get_current_rewards(cells, transformation):
+def get_current_rewards(cells):
     """
     Get the reward matrix based on grid's current circumstances(each tile's label) and robot's history.
     :param cells: cells attribute of robot.grid, a matrix record the label of each tile
@@ -41,9 +41,7 @@ def get_current_rewards(cells, transformation):
         # After all the tiles have been cleared
         # the robot must visit the death tile to terminate, so give it a high value 3
         reward[reward == -3] = 3
-    # upon a current reward matrix, we add a punishment matrix generated from robot history.
-    combined_reward=reward+transformation
-    return combined_reward
+    return reward
 
 def episode_generation(i,j,dirs,rewards,policy):
     # Generate an episode.
@@ -73,8 +71,8 @@ def episode_generation(i,j,dirs,rewards,policy):
 def Q_table(episode,Q,gamma=1.0):
     returns_sum = defaultdict(float)
     returns_count = defaultdict(float)
-    sa_in_episode = set([(x[0], x[1]) for x in episode])
-    for state, action in sa_in_episode:
+    sa_in_episode = set([x[0],(x[1][0],x[1][1]) for x in episode])
+    for i,j, action in sa_in_episode:
         sa_pair = (state, action)
         # Calculate Q(s,a) for each (s,a) pair (mc policy evaluation)
         # Find the first occurance of the (state, action) pair in the episode
@@ -107,12 +105,12 @@ def on_policy_mc_control(robot,dirs,rewards,max_iterations=10):
 
 def robot_epoch(robot):
     # initialize global variable "history" when starting the robot, to add the cleaned tiles in a matrix
-    if not any(robot.history):
-        n_cols = robot.grid.n_rows
-        n_rows = robot.grid.n_cols
-        global history
-        history = np.full((n_rows, n_cols),0.0)
-    history=np.where(history<99,history,99)
-    transformation = np.where(history==0, history, -0.01*history) # the range of each element is (-1,0]
-    rewards = get_current_rewards(robot.grid.cells,transformation)
+    # if not any(robot.history):
+    #     n_cols = robot.grid.n_rows
+    #     n_rows = robot.grid.n_cols
+    #     global history
+    #     history = np.full((n_rows, n_cols),0.0)
+    # history=np.where(history<99,history,99)
+    # transformation = np.where(history==0, history, -0.01*history) # the range of each element is (-1,0]
+    rewards = get_current_rewards(robot.grid.cells)
     optimal_policy = on_policy_mc_control(robot,dirs,rewards)
