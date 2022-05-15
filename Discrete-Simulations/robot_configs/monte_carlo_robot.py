@@ -15,6 +15,7 @@ def make_epsilon_greedy_policy(n_rows,n_cols, Q, rewards,policy, num_actions=4,e
         A[best_action] += (1.0 - epsilon)
         return A
     
+    policy = np.full((n_rows, n_cols), 0)     
     for i in range(0,n_rows):
         for j in range(0,n_cols):
             if rewards[i][j] not in [-3,-1]:
@@ -71,8 +72,8 @@ def episode_generation(i,j,dirs,rewards,policy):
 def Q_table(episode,Q,gamma=1.0):
     returns_sum = defaultdict(float)
     returns_count = defaultdict(float)
-    sa_in_episode = set([x[0],(x[1][0],x[1][1]) for x in episode])
-    for i,j, action in sa_in_episode:
+    sa_in_episode = set([(x[0],x[1]) for x in episode])
+    for state, action in sa_in_episode:
         sa_pair = (state, action)
         # Calculate Q(s,a) for each (s,a) pair (mc policy evaluation)
         # Find the first occurance of the (state, action) pair in the episode
@@ -87,20 +88,21 @@ def Q_table(episode,Q,gamma=1.0):
     return Q
 
 
-def on_policy_mc_control(robot,dirs,rewards,max_iterations=10):
+def on_policy_mc_control(robot,rewards,max_iterations=10):
     n_cols = robot.grid.n_rows 
     n_rows = robot.grid.n_cols
+    dirs= robot.dirs
     # initialization
     Q=init_Q(n_rows, n_cols,dirs)
     # first set the policy to be zero
-    policy = np.full((n_rows, n_cols), 0)       
+    policy=make_epsilon_greedy_policy(n_rows,n_cols,Q,rewards,policy,num_actions=4,epsilon=0.1) 
 
     # repeat till value converge:
     for l in range (int(max_iterations)):
         # generate an episode
-        policy=make_epsilon_greedy_policy(n_rows,n_cols,Q,rewards,policy,num_actions=4,epsilon=0.1)
         episode = episode_generation(i=robot.pos[0],j=robot.pos[1],policy=policy)
         Q = Q_table(episode,Q)
+        
     return 0
 
 def robot_epoch(robot):
@@ -113,4 +115,4 @@ def robot_epoch(robot):
     # history=np.where(history<99,history,99)
     # transformation = np.where(history==0, history, -0.01*history) # the range of each element is (-1,0]
     rewards = get_current_rewards(robot.grid.cells)
-    optimal_policy = on_policy_mc_control(robot,dirs,rewards)
+    optimal_policy = on_policy_mc_control(robot,rewards)
