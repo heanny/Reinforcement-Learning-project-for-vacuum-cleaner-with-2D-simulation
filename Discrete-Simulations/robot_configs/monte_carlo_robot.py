@@ -14,7 +14,7 @@ class MC:
     and value based.
     """
 
-    def __init__(self, robot, gamma=0.8, epsilon = 0.1, max_iteration=100) -> None:
+    def __init__(self, robot, gamma=1, epsilon = 0.1, max_iteration=100) -> None:
         self.robot = robot
         self.n_cols = robot.grid.n_rows
         self.n_rows = robot.grid.n_cols
@@ -25,8 +25,8 @@ class MC:
         # self.Qvalue_table = self.init_Qvalue_table(self.n_rows, self.n_cols)
         self.directions = ['n', 'e', 's', 'w']
         self.direction_index_map = {'n': 0, 'e': 1, 's': 2, 'w': 3}
-        self.trans_dirs = {(0, -1):0, (1, 0): 1, (0, 1): 2, (-1, 0):3}
-        # self.trans_dirs = {(-1, 0):0, (0, 1): 1, (1, 0): 2, (0, -1):3}
+        # self.trans_dirs = {(0, -1):0, (1, 0): 1, (0, 1): 2, (-1, 0):3}
+        self.trans_dirs = {(-1, 0):0, (0, 1): 1, (1, 0): 2, (0, -1):3}
         self.Q = np.zeros((4,self.n_rows,self.n_cols))
 
     # def init_state_value(self):
@@ -170,7 +170,7 @@ class MC:
 
 
 def robot_epoch(robot):
-    model_free = MC(robot,gamma=0.8,epsilon=0.5,max_iteration=100)
+    model_free = MC(robot,gamma=1,epsilon=0.1,max_iteration=100)
     optimal_policy = model_free.on_policy_mc_control()
     policy_of_current_state = optimal_policy[:, robot.pos[0], robot.pos[1]]
     indices = np.where(policy_of_current_state == np.max(policy_of_current_state))[0]
