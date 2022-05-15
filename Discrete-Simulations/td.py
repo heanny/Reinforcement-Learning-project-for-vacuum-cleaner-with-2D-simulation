@@ -4,7 +4,7 @@ import copy
 import random
 from numpy.random import choice
 
-class ModelFree:
+class TD:
     """
     This class implements model free reinforcement learning techniques.
     """

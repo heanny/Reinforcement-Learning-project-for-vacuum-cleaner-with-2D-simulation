@@ -1,7 +1,7 @@
 import copy
 import numpy as np
 from numpy.random import choice
-from model_free import ModelFree
+from td import TD
 
 
 def sarsa(model_free, alpha, gamma, epsilon, episodes):
@@ -41,7 +41,7 @@ def sarsa(model_free, alpha, gamma, epsilon, episodes):
 
 
 def robot_epoch(robot):
-    model_free = ModelFree(robot)
+    model_free = TD(robot)
     optimal_policy = sarsa(model_free, 0.1, 0.9, 0.2, 400)
     policy_of_current_state = optimal_policy[:, robot.pos[0], robot.pos[1]]
     indices = np.where(policy_of_current_state == np.max(policy_of_current_state))[0]

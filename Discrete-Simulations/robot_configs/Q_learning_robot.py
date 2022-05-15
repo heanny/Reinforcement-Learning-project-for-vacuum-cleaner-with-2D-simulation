@@ -1,7 +1,7 @@
 import numpy as np
 from numpy.random import choice
 import copy
-from model_free import ModelFree
+from td import TD
 
 def Q_learning(model_free, alpha, gamma, epsilon, episodes):
     while episodes:
@@ -36,8 +36,8 @@ def Q_learning(model_free, alpha, gamma, epsilon, episodes):
     return model_free.policy
 
 def robot_epoch(robot):
-    model_free = ModelFree(robot)
-    optimal_policy = Q_learning(model_free, 0.1, 1, 0.3, 500)
+    model_free = TD(robot)
+    optimal_policy = Q_learning(model_free, 0.1, 1, 0.3, 300)
     policy_of_current_state = optimal_policy[:, robot.pos[0], robot.pos[1]]
     indices = np.where(policy_of_current_state == np.max(policy_of_current_state))[0]
     probability = []
