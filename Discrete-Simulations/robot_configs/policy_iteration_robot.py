@@ -79,8 +79,8 @@ def policy_evaluation(dirs, rewards, values, policy,gamma=1.0, theta=1, max_iter
                 for key in policy[i][j].keys():
                     # find the next state for each action
                     action_prob = policy[i][j].get(key)
-                    row = i+dirs.get(key)[1]
-                    col = j+dirs.get(key)[0]
+                    row = i+dirs.get(key)[0]
+                    col = j+dirs.get(key)[1]
                     # if the next state is out of bound, use the current state
                     if not (row < int(rows) and col < int(col)):
                         row = i

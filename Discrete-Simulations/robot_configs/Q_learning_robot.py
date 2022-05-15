@@ -1,6 +1,5 @@
 import numpy as np
 import copy
-import random
 from numpy.random import choice
 
 # initialization function
@@ -26,7 +25,7 @@ def init_Qvalue_table(n_rows, n_cols):
     :param n_cols: number of columns in the grid
     :returns policy: the 3D Q-value matrix
     """
-    return np.zeros((4,n_rows, n_cols))
+    return np.zeros((4, n_rows, n_cols))
 
 def simulation(robot, action, transformation):
     # get reward of action
@@ -34,8 +33,10 @@ def simulation(robot, action, transformation):
     possible_tiles = robot.possible_tiles_after_move()
     reward = possible_tiles[coordinate]
     if reward == 3:
+        reward = -3
+    if reward == -1:
         reward = -2
-    if reward == -2:
+    if reward == 0:
         reward = -1
     # take action
     while not action == robot.orientation:
@@ -45,8 +46,8 @@ def simulation(robot, action, transformation):
     robot.move()
     print("end move")
     # return the new state s' and reward
-    if reward == 0:
-        reward = transformation[robot.pos[0]][robot.pos[1]]
+    # if reward == 0:
+        # reward = transformation[robot.pos[0]][robot.pos[1]]
     return robot.pos, reward
 
 def Q_learning(robot, transformation, alpha, gamma, epsilon, episodes):
@@ -58,9 +59,12 @@ def Q_learning(robot, transformation, alpha, gamma, epsilon, episodes):
     directions = ['n', 'e', 's', 'w']
     direction_index_map = {'n':0, 'e':1, 's':2, 'w':3}
     frequency = np.zeros((n_rows, n_cols))
+    # policy_not_stable = True
     while episodes:
         robot_copy = copy.deepcopy(robot)
-        while robot_copy.alive and np.max(robot_copy.grid.cells) > 0 and np.max(frequency) < 20:
+        not_finished = True
+        # and np.max(frequency) < 20
+        while robot_copy.alive and not_finished and np.max(frequency) < 20:
             print("+++++++++++++++++++++++ start +++++++++++++++++++++++++++++++")
             print(robot_copy.alive, np.max(robot_copy.grid.cells))
             # current state
@@ -90,6 +94,7 @@ def Q_learning(robot, transformation, alpha, gamma, epsilon, episodes):
 
             # update epsilon-greedy policy
             print("old policy:", policy[:, i, j])
+            old_policy = policy[:, i, j]
             Qvalues = Qvalue_table[:, i, j]  # get current state all Qvalues
             max_Qvalue = max(Qvalues)  # get the highest Q(s,a) for s, there could be more than 1 highest Q(s,a)
             indices = [index for index, value in enumerate(Qvalues) if value == max_Qvalue] # find the indices of all max value
@@ -101,7 +106,14 @@ def Q_learning(robot, transformation, alpha, gamma, epsilon, episodes):
                 else:
                     policy[index, i, j] = smallest_probability
             print("new policy:", policy[:, i, j])
+            # if (old_policy == policy[:, i, j]).all():
+            #     policy_not_stable = False
+            clean = (robot_copy.grid.cells == 0).sum()
+            dirty = (robot_copy.grid.cells >= 1).sum()
+            if clean/(clean+dirty) == 1:
+                not_finished = False
             print("+++++++++++++++++++++++ end +++++++++++++++++++++++++++++++")
+
         episodes -= 1
     return policy
 
@@ -117,7 +129,7 @@ def robot_epoch(robot):
     history = np.where(history < 99, history, 99)
     transformation = np.where(history == 0, history, -0.01 * history)  # the range of each element is (-1,0]
 
-    optimal_policy = Q_learning(robot, transformation, 0.1, 1, 0.4, 500)
+    optimal_policy = Q_learning(robot, transformation, 0.1, 1, 0.2, 500)
     policy_of_current_state = optimal_policy[:, robot.pos[0], robot.pos[1]]
     indices = np.where(policy_of_current_state == np.max(policy_of_current_state))[0]
     probability = []
