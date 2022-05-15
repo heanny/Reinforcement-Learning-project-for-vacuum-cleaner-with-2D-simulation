@@ -49,9 +49,13 @@ class ModelFree:
         possible_tiles = robot.possible_tiles_after_move()
         reward = possible_tiles[coordinate]
         if reward == 3:
-            reward = -2
+            reward = -3
         if reward == -2:
             reward = -1
+        if reward == 0:
+            reward = 0
+        if 3 > reward >= 1:
+            reward = 1
         # take action
         while not action == robot.orientation:
             # If we don't have the wanted orientation, rotate clockwise until we do:
@@ -67,12 +71,13 @@ class ModelFree:
     def update_Qvalue(self, action, state, next_state, reward, alpha, gamma, on_policy, next_action):
         # update Qvalue table
         action_index = self.direction_index_map[action]
-        next_action_index = self.direction_index_map[next_action]
+        # next_action_index = self.direction_index_map[next_action]
         old_Qvalue = self.Qvalue_table[action_index, state[0], state[1]]  # get Q(s,a)
-        print("old Qvalue:", old_Qvalue)
- # get max Qvalue of s'
+        #print("old Qvalue:", old_Qvalue)
+        # get max Qvalue of s'
 
         if on_policy:
+            next_action_index = self.direction_index_map[next_action]
             # next_action_Qvalues = self.Qvalue_table[next_action, next_state[0], next_state[1]]
             next_action_Qvalues = self.Qvalue_table[next_action_index, next_state[0], next_state[1]]
             self.Qvalue_table[action_index, state[0], state[1]] = old_Qvalue + alpha * (
@@ -81,11 +86,11 @@ class ModelFree:
             next_state_Qvalues = self.Qvalue_table[:, next_state[0], next_state[1]]  # get all the Q(s',a)
             next_state_max_Qvalue = max(next_state_Qvalues)
             self.Qvalue_table[action_index, state[0], state[1]] = old_Qvalue + alpha * (reward + gamma * next_state_max_Qvalue - old_Qvalue)
-        print("new Qvalue:", self.Qvalue_table[action_index, state[0], state[1]])
+        #print("new Qvalue:", self.Qvalue_table[action_index, state[0], state[1]])
 
     def update_policy(self, epsilon, state):
         # update epsilon-greedy policy
-        print("old policy:", self.policy[:, state[0], state[1]])
+        #print("old policy:", self.policy[:, state[0], state[1]])
         old_policy = self.policy[:, state[0], state[1]]
         Qvalues = self.Qvalue_table[:, state[0], state[1]]  # get current state all Qvalues
         max_Qvalue = max(Qvalues)  # get the highest Q(s,a) for s, there could be more than 1 highest Q(s,a)
@@ -98,4 +103,4 @@ class ModelFree:
                 self.policy[index, state[0], state[1]] = greedy_probability
             else:
                 self.policy[index, state[0], state[1]] = smallest_probability
-        print("new policy:", self.policy[index, state[0], state[1]])
+        #print("new policy:", self.policy[index, state[0], state[1]])
