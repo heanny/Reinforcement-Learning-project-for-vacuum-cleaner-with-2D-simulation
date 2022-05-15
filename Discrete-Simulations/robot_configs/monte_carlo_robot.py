@@ -1,6 +1,6 @@
 import random
 from collections import defaultdict
-from copy import deepcopy, copy
+from copy import deepcopy
 
 import numpy as np
 import numpy.typing as npt
@@ -25,7 +25,8 @@ class MC:
         # self.Qvalue_table = self.init_Qvalue_table(self.n_rows, self.n_cols)
         self.directions = ['n', 'e', 's', 'w']
         self.direction_index_map = {'n': 0, 'e': 1, 's': 2, 'w': 3}
-        self.Q = np.zeros(4,self.n_rows,self.n_cols)
+        self.trans_dirs = {(0, -1):0, (1, 0): 1, (0, 1): 2, (-1, 0):3}
+        self.Q = np.zeros((4,self.n_rows,self.n_cols))
 
     # def init_state_value(self):
     #     state_space_cln = []
@@ -59,30 +60,31 @@ class MC:
         #     reward = transformation[robot.pos[0]][robot.pos[1]]
         return robot.pos, reward
 
-    def Q_table(self, episode, Q, gamma=1.0):
+    def Q_table(self, episode):
         returns_sum = defaultdict(float)
         returns_count = defaultdict(float)
         sa_in_episode = set([(x[0], x[1]) for x in episode])
+        Q = self.Q
         for state, action in sa_in_episode:
             sa_pair = (state, action)
+            action_num = self.direction_index_map[action]
             # Calculate Q(s,a) for each (s,a) pair (mc policy evaluation)
             # Find the first occurance of the (state, action) pair in the episode
             first_occurence_idx = next(i for i, x in enumerate(episode)
                                        if x[0] == state and x[1] == action)
             # Sum up all rewards since the first occurance
-            G = sum([x[2] * (gamma ** i) for i, x in enumerate(episode[first_occurence_idx:])])
+            G = sum([x[2] * (self.gamma ** i) for i, x in enumerate(episode[first_occurence_idx:])])
             # Calculate average return for this state over all sampled episodes
             returns_sum[sa_pair] += G
             returns_count[sa_pair] += 1.0
-            Q[state[0],state[1],action] = returns_sum[sa_pair] / returns_count[sa_pair]
+            Q[action_num][state[0]][state[1]] = returns_sum[sa_pair] / returns_count[sa_pair]
         return Q
 
 
     def generate_episode(self,policy): #,transformation
         episode = []
-
-        robot_copy = copy.deepcopy(self.robot)
-        frequency = np.zeros((self.robot_copy.grid.n_rows, self.robot_copy.grid.n_cols))
+        robot_copy = deepcopy(self.robot)
+        frequency = np.zeros((robot_copy.grid.n_rows, robot_copy.grid.n_cols))
         while robot_copy.alive and np.max(robot_copy.grid.cells) > 0 and np.max(frequency) < 20:
             print("+++++++++++++++++++++++ start +++++++++++++++++++++++++++++++")
             print(robot_copy.alive, np.max(robot_copy.grid.cells))
@@ -97,7 +99,8 @@ class MC:
             # for a in self.directions:
             #     next_state: int = self._cells[(i + a[1]), (j + a[0])]
             #     if (-2 <= next_state < 0):
-            action = random.choice(self.directions, p=policy_of_current_state)
+            print(policy_of_current_state)
+            action = np.random.choice(self.directions, p=policy_of_current_state)
 
             # simulate and get s' and r
             print("start simulation")
@@ -127,33 +130,38 @@ class MC:
         n_rows = robot.grid.n_cols
         dirs = robot.dirs
         # initialization
-        Q = self.Q_table()
+        Q_tmp = deepcopy(self.Q)
         policy = self.policy
+        print("policy:")
+        print(policy)
         # first set the policy to be zero
         # policy = self.make_epsilon_greedy_policy(n_rows, n_cols, Q, rewards, policy, num_actions=4, epsilon=0.1)
         epsilon = self.epsilon
         # repeat till value converge:
-        for l in range(int(self.max_iterations)):
+        for l in range(int(self.max_iteration)):
             # generate an episode
-            episode = self.generate_episode(policy,robot) #,transformation
+            episode = self.generate_episode(policy) #,transformation
             # Update Q table for each (s,a) in episode
-            Q = self.Q_table(episode,Q,self.gamma)
+            Q_tmp = self.Q_table(episode)
             # TODO: Change |A(s)|
             for item in episode: # (state,action,reward)
-                state=[item[0],item[1]]
-                best_action = np.argmax(Q[:,state[0], state[1]])
-                for action in self.robot.possible_tiles_after_move():
+                state=item[0]
+                best_action = np.argmax(Q_tmp[:,state[0],state[1]])
+                # self.direction_index_map.items()
+                for action in range(4): 
+                    # self.robot.possible_tiles_after_move()
+                    # a = self.trans_dirs[action]
                     if action == best_action:
-                        policy[state[0],state[1]] = 1-epsilon+epsilon/4
+                        policy[action,state[0],state[1]] = 1-epsilon+epsilon/4
                     else:
-                        policy[state[0],state[1]] = epsilon/4
+                        policy[action,state[0],state[1]] = epsilon/4
         return policy
 
 
 
 
 def robot_epoch(robot):
-    model_free = MC(robot)
+    model_free = MC(robot,gamma=0.2,epsilon=0.2,max_iteration=10)
     optimal_policy = model_free.on_policy_mc_control()
     policy_of_current_state = optimal_policy[:, robot.pos[0], robot.pos[1]]
     indices = np.where(policy_of_current_state == np.max(policy_of_current_state))[0]
@@ -163,7 +171,7 @@ def robot_epoch(robot):
             probability.append(1/len(indices))
         else:
             probability.append(0)
-    direction = random.choice(model_free.directions, p=probability)
+    direction = np.random.choice(model_free.directions, p=probability)
     print("+++++++++++++++++++++++ move +++++++++++++++++++++++++++++++")
     print(direction)
     while not direction == robot.orientation:
