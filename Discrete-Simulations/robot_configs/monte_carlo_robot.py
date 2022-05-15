@@ -7,27 +7,20 @@ import numpy.typing as npt
 from typing import Dict, Tuple, List, Optional
 from environment import Robot
 
-@dataclass
-class Transition:
-    """
-    Represents the mandatory fields of a transition.
-    It contains the probability of a transition, the next state due to the transition
-    and the reward.
-    """
-    probability: float
-    next_state: int
-    reward: int
 
-class ModelFreeRL:
+class MC:
     """
     This class implements two mode-based reinforcement learning techniques: policy based
     and value based.
     """
 
-    def __init__(self, robot: Robot,gamma=0.1,epsilon = 0.1) -> None:
+    def __init__(self, robot, gamma=0.1, epsilon = 0.1, max_iteration=100) -> None:
         self.robot = robot
         self.n_cols = robot.grid.n_rows
         self.n_rows = robot.grid.n_cols
+        self.max_iteration = max_iteration
+        self.gamma = gamma
+        self.epsilon = epsilon
         self.policy = np.full((4,self.n_rows, self.n_cols),0.25)
         # self.Qvalue_table = self.init_Qvalue_table(self.n_rows, self.n_cols)
         self.directions = ['n', 'e', 's', 'w']
@@ -45,7 +38,7 @@ class ModelFreeRL:
     #                 state_space_cln.append(row*col)
     #     return state_space_cln,state_space_obs
 
-    def simulation(self, robot, action, transformation):
+    def simulation(self, robot, action): # , transformation
         # get reward of action
         coordinate = robot.dirs[action]
         possible_tiles = robot.possible_tiles_after_move()
@@ -62,8 +55,8 @@ class ModelFreeRL:
         robot.move()
         print("end move")
         # return the new state s' and reward
-        if reward == 0:
-            reward = transformation[robot.pos[0]][robot.pos[1]]
+        # if reward == 0:
+        #     reward = transformation[robot.pos[0]][robot.pos[1]]
         return robot.pos, reward
 
     def Q_table(self, episode, Q, gamma=1.0):
@@ -85,10 +78,10 @@ class ModelFreeRL:
         return Q
 
 
-    def generate_episode(self, policy,robot,transformation):
+    def generate_episode(self,policy): #,transformation
         episode = []
 
-        robot_copy = copy.deepcopy(robot)
+        robot_copy = copy.deepcopy(self.robot)
         frequency = np.zeros((self.robot_copy.grid.n_rows, self.robot_copy.grid.n_cols))
         while robot_copy.alive and np.max(robot_copy.grid.cells) > 0 and np.max(frequency) < 20:
             print("+++++++++++++++++++++++ start +++++++++++++++++++++++++++++++")
@@ -108,27 +101,28 @@ class ModelFreeRL:
 
             # simulate and get s' and r
             print("start simulation")
-            next_state, reward = self.simulation(robot_copy, action, transformation)
+            next_state, reward = self.simulation(robot_copy, action) #, transformation
             print("end simulation")
             print(next_state, reward)
             episode.append((state,action,reward))
 
         return episode
 
-    def make_epsilon_greedy_policy(n_rows, n_cols, Q, rewards, policy, num_actions=4, epsilon=0.1):
-        def policy_for_state(i, j):
-            A = np.ones(num_actions, dtype=float) * epsilon / num_actions
-            best_action = np.argmax(Q[:, i, j])
-            A[best_action] += (1.0 - epsilon)
-            return A
+    # def make_epsilon_greedy_policy(n_rows, n_cols, Q, rewards, policy, num_actions=4, epsilon=self.epsilon):
+    #     def policy_for_state(i, j):
+    #         A = np.ones(num_actions, dtype=float) * epsilon / num_actions
+    #         best_action = np.argmax(Q[:, i, j])
+    #         A[best_action] += (1.0 - epsilon)
+    #         return A
+    #
+    #     for i in range(0, n_rows):
+    #         for j in range(0, n_cols):
+    #             if rewards[i][j] not in [-3, -1]:
+    #                 policy[i][j] = policy_for_state(i, j)
+    #     return policy
 
-        for i in range(0, n_rows):
-            for j in range(0, n_cols):
-                if rewards[i][j] not in [-3, -1]:
-                    policy[i][j] = policy_for_state(i, j)
-        return policy
-
-    def on_policy_mc_control(self,robot, rewards,epsilon,transformation,gamma,max_iterations=10):
+    def on_policy_mc_control(self): # ,transformation
+        robot = self.robot
         n_cols = robot.grid.n_rows
         n_rows = robot.grid.n_cols
         dirs = robot.dirs
@@ -136,14 +130,14 @@ class ModelFreeRL:
         Q = self.Q_table()
         policy = self.policy
         # first set the policy to be zero
-        policy = self.make_epsilon_greedy_policy(n_rows, n_cols, Q, rewards, policy, num_actions=4, epsilon=0.1)
-
+        # policy = self.make_epsilon_greedy_policy(n_rows, n_cols, Q, rewards, policy, num_actions=4, epsilon=0.1)
+        epsilon = self.epsilon
         # repeat till value converge:
-        for l in range(int(max_iterations)):
+        for l in range(int(self.max_iterations)):
             # generate an episode
-            episode = self.generate_episode(policy,robot,transformation)
+            episode = self.generate_episode(policy,robot) #,transformation
             # Update Q table for each (s,a) in episode
-            Q = self.Q_table(episode,Q,gamma)
+            Q = self.Q_table(episode,Q,self.gamma)
             # TODO: Change |A(s)|
             for item in episode: # (state,action,reward)
                 state=[item[0],item[1]]
@@ -154,3 +148,26 @@ class ModelFreeRL:
                     else:
                         policy[state[0],state[1]] = epsilon/4
         return policy
+
+
+
+
+def robot_epoch(robot):
+    model_free = MC(robot)
+    optimal_policy = model_free.on_policy_mc_control()
+    policy_of_current_state = optimal_policy[:, robot.pos[0], robot.pos[1]]
+    indices = np.where(policy_of_current_state == np.max(policy_of_current_state))[0]
+    probability = []
+    for index in range(0, 4):
+        if index in indices:
+            probability.append(1/len(indices))
+        else:
+            probability.append(0)
+    direction = random.choice(model_free.directions, p=probability)
+    print("+++++++++++++++++++++++ move +++++++++++++++++++++++++++++++")
+    print(direction)
+    while not direction == robot.orientation:
+        # If we don't have the wanted orientation, rotate clockwise until we do:
+        robot.rotate('r')
+    # Move:
+    robot.move()
