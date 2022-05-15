@@ -1,83 +1,64 @@
 from sarsa_brain import SarsaTable
 import copy
 import numpy as np
+from numpy.random import choice
+from model_free import ModelFree
 
 
-def get_current_rewards(cells):
-    """
-    Get the reward matrix based on grid's current circumstances(each tile's label) and robot's history.
-    :param cells: cells attribute of robot.grid, a matrix record the label of each tile
-    :returns combined_reward: a reward matrix
-    """
-    reward = copy.deepcopy(cells)
-    # label < -2: this tile has a robot with different direction inside it. We set it to 0, meaning it is already clean.
-    reward[reward < -2] = 0
-    # label -2: this tile is an obstacle, we think they have the same function of wall tiles, so we reset as -1
-    reward[reward == -2] = -1
-    # label 3: death tile, give -3 to avoid robot reach it.
-    reward[reward == 3] = -3
-    max_value = np.max(reward)
-    if max_value < 1:
-        # After all the tiles have been cleared
-        # the robot must visit the death tile to terminate, so give it a high value 3
-        reward[reward == -3] = 3
-    print("reward")
-    return reward
+def sarsa(model_free, alpha, gamma, epsilon, episodes):
+    clean_count = np.zeros((model_free.n_cols, model_free.n_rows))
+    while episodes:
+        robot_copy = copy.deepcopy(model_free.robot)
+        done = False
+        # initial state
+        state = robot_copy.pos
+        policy = model_free.policy[:,state[0], state[1]]
+        action = choice(model_free.directions, p=policy)
+        while robot_copy.alive and not done:
+            # Move
+            state_, reward = model_free.simulation(robot_copy, action)
+            policy_ = model_free.policy[:, state_[0], state_[1]]
+            action_ = choice(model_free.directions, p=policy_)
+            clean_count[state[0]][state[1]] += 1
+
+            # update Q table
+            model_free.update_Qvalue(action, state, state_, reward, alpha, gamma, True, action_)
+            # update policy
+            model_free.update_policy(epsilon, state_)
+            action = action_
+            state = state_
+
+            # if the cleanliness percentage is 100
+            clean = (robot_copy.grid.cells == 0).sum()
+            dirty = (robot_copy.grid.cells >= 1).sum()
+            cleanliness = clean/(clean+dirty)
+            if cleanliness == 1:
+                done = True
+
+        episodes -= 1
+    return model_free.policy
+
+
 
 
 def robot_epoch(robot):
-    # env = Maze()
-    RL = SarsaTable(actions=list(range(4)))
-    print("initial ok")
-    for episode in range(100):
-        # initial observation
-        # observation = env.reset()
-        observation = robot.pos
 
-        # RL choose action based on observation
-        action = RL.choose_action(str(observation))
-
-        while True:
-            # fresh env
-            # env.render()
-
-            # RL take action and get next observation and reward
-            while action != robot.orientation:
-                # If we don't have the wanted orientation, rotate clockwise until we do:
-                robot.rotate('r')
-            # Move:
-            robot.move()
-
-            reward = get_current_rewards(robot.grid.cells)
-            done = robot.alive
-            if done == False:
-                observation_ = 'terminal'
-            else:
-                observation_ = robot.pos
-            # observation_, reward, done = env.step(action)
-
-            # RL choose action based on next observation
-            action_ = RL.choose_action(str(observation_))
-
-            # RL learn from this transition (s, a, r, s, a) ==> Sarsa
-            RL.learn(str(observation), action, reward, str(observation_), action_)
-
-            # swap observation and action
-            observation = observation_
-            action = action_
-
-            # break while loop when end of this episode
-            if done:
-                break
-
-    # end of game
-    # print('game over')
-    # env.destroy()
-
-# if __name__ == "__main__":
-#     env = Maze()
-#     RL = SarsaTable(actions=list(range(robot.orients)))
+    model_free = ModelFree(robot)
+    optimal_policy = sarsa(model_free, 0.1, 1, 0.1, 100)
+    policy_of_current_state = optimal_policy[:, robot.pos[0], robot.pos[1]]
+    indices = np.where(policy_of_current_state == np.max(policy_of_current_state))[0]
+    probability = []
+    for index in range(0, 4):
+        if index in indices:
+            probability.append(1/len(indices))
+        else:
+            probability.append(0)
+    direction = choice(model_free.directions, p=probability)
+    print(direction)
+    while not direction == robot.orientation:
+        # If we don't have the wanted orientation, rotate clockwise until we do:
+        robot.rotate('r')
+    # Move:
+    robot.move()
 
 
-# env.after(100, update)
-# env.mainloop()
