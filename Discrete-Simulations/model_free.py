@@ -67,15 +67,19 @@ class ModelFree:
     def update_Qvalue(self, action, state, next_state, reward, alpha, gamma, on_policy, next_action):
         # update Qvalue table
         action_index = self.direction_index_map[action]
+        next_action_index = self.direction_index_map[next_action]
         old_Qvalue = self.Qvalue_table[action_index, state[0], state[1]]  # get Q(s,a)
         print("old Qvalue:", old_Qvalue)
+ # get max Qvalue of s'
+
         if on_policy:
-            next_action_Qvalues = self.Qvalue_table[next_action, next_state[0], next_state[1]]
+            # next_action_Qvalues = self.Qvalue_table[next_action, next_state[0], next_state[1]]
+            next_action_Qvalues = self.Qvalue_table[next_action_index, next_state[0], next_state[1]]
             self.Qvalue_table[action_index, state[0], state[1]] = old_Qvalue + alpha * (
                         reward + gamma * next_action_Qvalues - old_Qvalue)
         else:
             next_state_Qvalues = self.Qvalue_table[:, next_state[0], next_state[1]]  # get all the Q(s',a)
-            next_state_max_Qvalue = max(next_state_Qvalues)  # get max Qvalue of s'
+            next_state_max_Qvalue = max(next_state_Qvalues)
             self.Qvalue_table[action_index, state[0], state[1]] = old_Qvalue + alpha * (reward + gamma * next_state_max_Qvalue - old_Qvalue)
         print("new Qvalue:", self.Qvalue_table[action_index, state[0], state[1]])
 
@@ -94,4 +98,4 @@ class ModelFree:
                 self.policy[index, state[0], state[1]] = greedy_probability
             else:
                 self.policy[index, state[0], state[1]] = smallest_probability
-        print("new policy:", self.policy[:, state[0], state[1]])
+        print("new policy:", self.policy[index, state[0], state[1]])
