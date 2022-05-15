@@ -1,5 +1,5 @@
 # Import our robot algorithm to use in this simulation:
-from robot_configs.policy_iteration_robot import robot_epoch
+from robot_configs.Q_learning_robot import robot_epoch
 import pickle
 from environment import Robot
 import matplotlib.pyplot as plt

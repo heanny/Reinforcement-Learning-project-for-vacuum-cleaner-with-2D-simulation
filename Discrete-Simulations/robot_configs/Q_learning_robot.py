@@ -4,12 +4,12 @@ import copy
 from model_free import ModelFree
 
 def Q_learning(model_free, alpha, gamma, epsilon, episodes):
-    frequency = np.zeros((model_free.n_rows, model_free.n_cols))
     while episodes:
         robot_copy = copy.deepcopy(model_free.robot)
+        frequency = np.zeros((model_free.n_rows, model_free.n_cols))
         not_finished = True
         # enter an episode
-        while robot_copy.alive and not_finished and np.max(frequency) < 200:
+        while robot_copy.alive and not_finished and np.max(frequency) < 3:
             print("+++++++++++++++++++++++ start +++++++++++++++++++++++++++++++")
             print(robot_copy.alive, np.max(robot_copy.grid.cells))
             # current state
