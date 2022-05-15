@@ -14,7 +14,7 @@ class MC:
     and value based.
     """
 
-    def __init__(self, robot, gamma=0.1, epsilon = 0.1, max_iteration=100) -> None:
+    def __init__(self, robot, gamma=0.8, epsilon = 0.1, max_iteration=100) -> None:
         self.robot = robot
         self.n_cols = robot.grid.n_rows
         self.n_rows = robot.grid.n_cols
@@ -26,6 +26,7 @@ class MC:
         self.directions = ['n', 'e', 's', 'w']
         self.direction_index_map = {'n': 0, 'e': 1, 's': 2, 'w': 3}
         self.trans_dirs = {(0, -1):0, (1, 0): 1, (0, 1): 2, (-1, 0):3}
+        # self.trans_dirs = {(-1, 0):0, (0, 1): 1, (1, 0): 2, (0, -1):3}
         self.Q = np.zeros((4,self.n_rows,self.n_cols))
 
     # def init_state_value(self):
@@ -84,8 +85,8 @@ class MC:
     def generate_episode(self,policy): #,transformation
         episode = []
         robot_copy = deepcopy(self.robot)
-        frequency = np.zeros((robot_copy.grid.n_rows, robot_copy.grid.n_cols))
-        while robot_copy.alive and np.max(robot_copy.grid.cells) > 0 and np.max(frequency) < 20:
+        frequency = np.zeros((robot_copy.grid.n_cols, robot_copy.grid.n_rows))
+        while robot_copy.alive and np.max(robot_copy.grid.cells) > 0 and np.max(frequency) < 3:
             print("+++++++++++++++++++++++ start +++++++++++++++++++++++++++++++")
             print(robot_copy.alive, np.max(robot_copy.grid.cells))
             # current state
@@ -99,7 +100,7 @@ class MC:
             # for a in self.directions:
             #     next_state: int = self._cells[(i + a[1]), (j + a[0])]
             #     if (-2 <= next_state < 0):
-            print(policy_of_current_state)
+            # print(policy_of_current_state)
             action = np.random.choice(self.directions, p=policy_of_current_state)
 
             # simulate and get s' and r
@@ -132,8 +133,6 @@ class MC:
         # initialization
         Q_tmp = deepcopy(self.Q)
         policy = self.policy
-        print("policy:")
-        print(policy)
         # first set the policy to be zero
         # policy = self.make_epsilon_greedy_policy(n_rows, n_cols, Q, rewards, policy, num_actions=4, epsilon=0.1)
         epsilon = self.epsilon
@@ -143,25 +142,35 @@ class MC:
             episode = self.generate_episode(policy) #,transformation
             # Update Q table for each (s,a) in episode
             Q_tmp = self.Q_table(episode)
+            # print("Q_tem:")
+            # print(Q_tmp)
             # TODO: Change |A(s)|
             for item in episode: # (state,action,reward)
                 state=item[0]
-                best_action = np.argmax(Q_tmp[:,state[0],state[1]])
+                A=Q_tmp[:,state[0],state[1]]
+                best_action = np.argmax(A)
+                best_action_indices = np.where(A==Q_tmp[best_action,state[0],state[1]])
+                # print("-------length and value of best actions-----")
+                # print(len(best_action_indices),best_action_indices[0])
                 # self.direction_index_map.items()
                 for action in range(4): 
                     # self.robot.possible_tiles_after_move()
                     # a = self.trans_dirs[action]
-                    if action == best_action:
-                        policy[action,state[0],state[1]] = 1-epsilon+epsilon/4
+                    if action in best_action_indices[0]:
+                        policy[action,state[0],state[1]] = (1-epsilon)/len(best_action_indices[0])+epsilon/4
                     else:
                         policy[action,state[0],state[1]] = epsilon/4
+            # print("policy for state and action")
+            # print(policy[action,state[0],state[1]])
+        # print("policy matrix:")
+        # print(policy)
         return policy
 
 
 
 
 def robot_epoch(robot):
-    model_free = MC(robot,gamma=0.2,epsilon=0.2,max_iteration=10)
+    model_free = MC(robot,gamma=0.8,epsilon=0.5,max_iteration=100)
     optimal_policy = model_free.on_policy_mc_control()
     policy_of_current_state = optimal_policy[:, robot.pos[0], robot.pos[1]]
     indices = np.where(policy_of_current_state == np.max(policy_of_current_state))[0]
