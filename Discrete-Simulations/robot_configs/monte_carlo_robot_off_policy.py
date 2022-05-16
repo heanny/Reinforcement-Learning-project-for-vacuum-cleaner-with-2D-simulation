@@ -45,7 +45,7 @@ def off_policy_mc_control(self):  # ,transformation
             # if the best action is not the only one, then each optimal direction has the same probability
             prob = 1 / len(best_action_indices[0])
             for action in best_action_indices[0]:
-                    policy_new[action] = prob
+                policy_new[action] = prob
             policy[:, state[0], state[1]] = policy_new
     return policy
 
