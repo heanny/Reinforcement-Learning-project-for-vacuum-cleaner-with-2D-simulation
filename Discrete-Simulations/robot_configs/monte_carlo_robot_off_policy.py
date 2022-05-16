@@ -38,22 +38,20 @@ def off_policy_mc_control(self):  # ,transformation
                         episode_new.append(episode_tmp)
             Q_tmp = self.Q_table(episode_new)
             # for each state, we find the action which argmax the Q(s,a) as the policy for this state
-            for act in range(4):
-                A = Q_tmp[:, state[0], state[1]]
-                best_action = np.argmax(A)
-                max_action_value = np.where(A == Q_tmp[best_action, state[0], state[1]])
-                policy_new = [0, 0, 0, 0]
-                # if the best action is not the only one, then each optimal direction has the same probability
-                prob = 1 / len(max_action_value)
-                for action in max_action_value:
-                    for t in range(len(action)):
-                        policy_new[action[t]] = prob
-                policy[:, state[0], state[1]] = policy_new
+            A = Q_tmp[:, state[0], state[1]]
+            best_action = np.argmax(A)
+            best_action_indices = np.where(A == Q_tmp[best_action, state[0], state[1]])
+            policy_new = [0, 0, 0, 0]
+            # if the best action is not the only one, then each optimal direction has the same probability
+            prob = 1 / len(best_action_indices[0])
+            for action in best_action_indices[0]:
+                    policy_new[action] = prob
+            policy[:, state[0], state[1]] = policy_new
     return policy
 
 
 def robot_epoch(robot):
-    model_free = MC(robot,gamma=1,epsilon=0.1,max_iteration=80)
+    model_free = MC(robot,gamma=1,epsilon=0.1,max_iteration=200)
     optimal_policy = off_policy_mc_control(model_free)
     # print(optimal_policy)
     policy_of_current_state = optimal_policy[:, robot.pos[0], robot.pos[1]]
