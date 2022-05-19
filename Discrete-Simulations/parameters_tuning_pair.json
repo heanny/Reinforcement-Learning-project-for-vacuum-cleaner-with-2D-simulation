@@ -1,5 +1,5 @@
 {
-  "parameters": [
+  "pair_parameters": [
     {
       "gamma": 0.0,
       "epsilon": 0.0
@@ -120,5 +120,76 @@
       "gamma": 1.0,
       "epsilon": 0.8
     }
-  ]
+  ],
+  "learning_rate_sarsa": [
+    {
+      "lr": 0.1,
+      "gamma": 0.8,
+      "epsilon": 0.0
+    },
+    {
+      "lr": 0.2,
+      "gamma": 0.8,
+      "epsilon": 0.0
+    },
+    {
+      "lr": 0.3,
+      "gamma": 0.8,
+      "epsilon": 0.0
+    },
+    {
+      "lr": 0.4,
+      "gamma": 0.8,
+      "epsilon": 0.0
+    },
+    {
+      "lr": 0.5,
+      "gamma": 0.8,
+      "epsilon": 0.0
+    }
+  ],  "learning_rate_Q": [
+    {
+      "lr": 0.1,
+      "gamma": 0.2,
+      "epsilon": 0.4
+    },
+    {
+      "lr": 0.2,
+      "gamma": 0.2,
+      "epsilon": 0.4
+    },
+    {
+      "lr": 0.3,
+      "gamma": 0.2,
+      "epsilon": 0.4
+    },
+      {
+      "lr": 0.4,
+      "gamma": 0.2,
+      "epsilon": 0.4
+    },
+      {
+      "lr": 0.5,
+      "gamma": 0.2,
+      "epsilon": 0.4
+    }
+  ], "gamma_off_policy_MC": [
+  {
+      "gamma": 0.0
+  },
+  {
+     "gamma": 0.2
+  },
+  {
+     "gamma": 0.4
+  },
+  {
+     "gamma": 0.6
+  },
+  {
+     "gamma": 0.8
+  },
+  {
+     "gamma": 1.0
+  }]
 }
