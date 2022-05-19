@@ -1,12 +1,21 @@
 # Import our robot algorithm to use in this simulation:
 from robot_configs.monte_carlo_robot_off_policy import robot_epoch
+#from robot_configs.sarsa_robot import robot_epoch
+from robot_configs.Q_learning_robot import robot_epoch
+#from robot_configs.policy_iteration_robot import robot_epoch
+#from robot_configs.value_iteration_robot import robot_epoch
+#from robot_configs.monte_carlo_robot_on_policy import robot_epoch
+#from robot_configs.monte_carlo_robot_off_policy import robot_epoch
 import pickle
 import time
 import numpy as np
 from environment import Robot
-import matplotlib.pyplot as plt
 
-grid_file = 'death.grid'
+# This headless is used for getting the average efficiency and runtime of each robot on house grid
+# Please uncomment the robot you would like to test and comment other robots.
+
+
+grid_file = 'house.grid'
 # Cleaned tile percentage at which the room is considered 'clean':
 stopping_criteria = 100
 
@@ -18,7 +27,7 @@ cleaned = []
 
 # Run 100 times:
 start_time = time.time()
-for i in range(10):
+for i in range(50):
     # Open the grid file.
     # (You can create one yourself using the provided editor).
     with open(f'grid_configs/{grid_file}', 'rb') as f:
@@ -58,21 +67,12 @@ for i in range(10):
     print(i)
 end_time = time.time()
 
+#print out the average efficiency and runtime
 average_time = (end_time-start_time)/(5*60)
 average_clean = np.mean(cleaned)
 average_eff = np.mean(efficiencies)
 print("average_time:",average_time)
 print("average_clean:",average_clean)
 print("average_eff:",average_eff)
-# Make some plots:
-plt.hist(cleaned)
-plt.title('Percentage of tiles cleaned.')
-plt.xlabel('% cleaned')
-plt.ylabel('count')
-plt.show()
 
-plt.hist(efficiencies)
-plt.title('Efficiency of robot.')
-plt.xlabel('Efficiency %')
-plt.ylabel('count')
-plt.show()
+
