@@ -88,7 +88,6 @@ class MC:
         """
         # find unique state and action in an episode
         sa_in_episode = set([(x[0], x[1]) for x in episode])
-        Q = self.Q
         for state, action in sa_in_episode:
             sa_pair = (state, action)
             action_num = self.direction_index_map[action] # get index for action
@@ -101,5 +100,4 @@ class MC:
             # Calculate average return for this state over all the episodes
             self.returns_sum[sa_pair] += G
             self.returns_count[sa_pair] += 1.0
-            Q[action_num][state[0]][state[1]] = self.returns_sum[sa_pair] / self.returns_count[sa_pair]
-        return Q
+            self.Q[action_num][state[0]][state[1]] = self.returns_sum[sa_pair] / self.returns_count[sa_pair]
