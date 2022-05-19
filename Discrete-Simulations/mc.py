@@ -81,7 +81,7 @@ class MC:
 
     def Q_table(self, episode):
         """
-        Generate Q_table based on athe episode.
+        Generate Q_table based on the episode.
 
         :param episode: an episode (list of (state, action, reward))
         """
