@@ -1,12 +1,10 @@
 from environment import Robot
 import numpy as np
-import copy
-import random
-from numpy.random import choice
 
 class TD:
     """
-    This class implements model free reinforcement learning techniques.
+    This class implements temporal difference algorithms: SARSA, Q-learning.
+
     """
 
     def __init__(self, robot: Robot) -> None:
@@ -44,16 +42,28 @@ class TD:
         return np.zeros((4, n_rows, n_cols))
 
     def simulation(self, robot, action):
-        # get reward of action
+        """
+        Simulate an action of the episode and give its corresponding position and reward.
+
+        :param robot: the robot copy
+        :param action: the proposed action
+        :return robot.pos: the position of robot
+        :return reward: the reward for the action
+        """
         coordinate = robot.dirs[action]
         possible_tiles = robot.possible_tiles_after_move()
+        # get the reward of an action
         reward = possible_tiles[coordinate]
+        # the death tile has reward of -3
         if reward == 3:
             reward = -3
+        # the wall and obstacle tiles have reward of -1
         if reward == -2:
             reward = -1
+        # the cleaned tiles have reward of 0
         if reward == 0:
             reward = 0
+        # the goal and dirty tiles have reward of 1
         if 3 > reward >= 1:
             reward = 1
         # take action
@@ -65,26 +75,57 @@ class TD:
         return robot.pos, reward
 
     def update_Qvalue(self, action, state, next_state, reward, alpha, gamma, on_policy, next_action):
+        """
+        Update the value in Q table based on given arguments
+
+        :param action: the current action
+        :param state: the current state
+        :param next_state: the next state
+        :param reward: the reward of the current action
+        :param alpha: the learning rate
+        :param gamma: the discounted factor
+        :param alpha: the learning rate
+        :param on_policy: the flag for control the Q-learning (on-policy: False) and SARSA (on-policy: True)
+        :param next_action: the next action
+        :return robot.pos: the position of robot
+        :return reward: the reward for the action
+        """
         # update Qvalue table
         action_index = self.direction_index_map[action]
+        # get the old value Q(s,a)
         old_Qvalue = self.Qvalue_table[action_index, state[0], state[1]]  # get Q(s,a)
-        # get max Qvalue of s'
+        # get max Q-value of s'
+        # if it is SARSA algorithm
         if on_policy:
+            # if it is SARSA algorithm
             next_action_index = self.direction_index_map[next_action]
+            # calculate the Q(s',a)
             next_action_Qvalues = self.Qvalue_table[next_action_index, next_state[0], next_state[1]]
             self.Qvalue_table[action_index, state[0], state[1]] = old_Qvalue + alpha * (reward + gamma * next_action_Qvalues - old_Qvalue)
+
         else:
-            next_state_Qvalues = self.Qvalue_table[:, next_state[0], next_state[1]]  # get all the Q(s',a)
+            # if it is Q-learning algorithm
+            next_state_Qvalues = self.Qvalue_table[:, next_state[0], next_state[1]]
+            # calculate the Q(s',a)
             next_state_max_Qvalue = max(next_state_Qvalues)
             self.Qvalue_table[action_index, state[0], state[1]] = old_Qvalue + alpha * (reward + gamma * next_state_max_Qvalue - old_Qvalue)
 
     def update_policy(self, epsilon, state):
-        # update epsilon-greedy policy
-        Qvalues = self.Qvalue_table[:, state[0], state[1]]  # get current state all Qvalues
-        max_Qvalue = max(Qvalues)  # get the highest Q(s,a) for s, there could be more than 1 highest Q(s,a)
-        indices = [index for index, value in enumerate(Qvalues) if
-                   value == max_Qvalue]  # find the indices of all max value
-        smallest_probability = epsilon / 4  # smallest_probability for maintaining exploration
+        """
+        Update the epsilon-greedy policy based on given arguments epsilon and current state
+
+        :param epsilon:
+        :param state: the current state
+        """
+        # get current state all Q-values
+        Qvalues = self.Qvalue_table[:, state[0], state[1]]
+
+        # get the highest Q(s,a) for s, there could be more than 1 highest Q(s,a)
+        max_Qvalue = max(Qvalues)
+        # find the indices of all max values
+        indices = [index for index, value in enumerate(Qvalues) if value == max_Qvalue]
+        # smallest_probability for maintaining exploration
+        smallest_probability = epsilon / 4
         greedy_probability = (1 - epsilon) / len(indices) + epsilon / 4
         for index in range(0, 4):
             if index in indices:
