@@ -42,7 +42,26 @@ def sarsa(model_free, alpha, gamma, epsilon, episodes):
 
 def robot_epoch(robot):
     model_free = TD(robot)
-    optimal_policy = sarsa(model_free, 0.1, 0.9, 0.2, 400)
+    # alpha gamma epsilon episode
+    optimal_policy = sarsa(model_free, 0.1, 0.4, 0.2, 500)# 0.1, 1, 0.35, 500 for death with 100 runs
+    policy_of_current_state = optimal_policy[:, robot.pos[0], robot.pos[1]]
+    indices = np.where(policy_of_current_state == np.max(policy_of_current_state))[0]
+    probability = []
+    for index in range(0, 4):
+        if index in indices:
+            probability.append(1 / len(indices))
+        else:
+            probability.append(0)
+    direction = choice(model_free.directions, p=probability)
+    while not direction == robot.orientation:
+        # If we don't have the wanted orientation, rotate clockwise until we do:
+        robot.rotate('r')
+    # Move:
+    robot.move()
+
+def robot_epoch_(robot, lr, gamma, epsilon):
+    model_free = TD(robot)
+    optimal_policy = sarsa(model_free, lr, gamma, epsilon, 500)# 0.1, 1, 0.35, 500 for death with 100 runs
     policy_of_current_state = optimal_policy[:, robot.pos[0], robot.pos[1]]
     indices = np.where(policy_of_current_state == np.max(policy_of_current_state))[0]
     probability = []

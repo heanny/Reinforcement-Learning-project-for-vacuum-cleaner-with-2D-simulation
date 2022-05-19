@@ -52,3 +52,21 @@ def robot_epoch(robot):
         robot.rotate('r')
     # Move:
     robot.move()
+
+def robot_epoch_(robot, lr, gamma, epsilon):
+    model_free = TD(robot)
+    optimal_policy = Q_learning(model_free, lr, gamma, epsilon, 500)
+    policy_of_current_state = optimal_policy[:, robot.pos[0], robot.pos[1]]
+    indices = np.where(policy_of_current_state == np.max(policy_of_current_state))[0]
+    probability = []
+    for index in range(0, 4):
+        if index in indices:
+            probability.append(1/len(indices))
+        else:
+            probability.append(0)
+    direction = choice(model_free.directions, p=probability)
+    while not direction == robot.orientation:
+        # If we don't have the wanted orientation, rotate clockwise until we do:
+        robot.rotate('r')
+    # Move:
+    robot.move()
