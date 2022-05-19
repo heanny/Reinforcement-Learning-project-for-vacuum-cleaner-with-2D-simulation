@@ -84,7 +84,6 @@ class MC:
         Generate Q_table based on athe episode.
 
         :param episode: an episode (list of (state, action, reward))
-        :return Q: the updated Q table according to the episode
         """
         # find unique state and action in an episode
         sa_in_episode = set([(x[0], x[1]) for x in episode])
