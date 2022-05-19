@@ -1,0 +1,124 @@
+{
+  "parameters": [
+    {
+      "gamma": 0.0,
+      "epsilon": 0.0
+    },
+    {
+      "gamma": 0.0,
+      "epsilon": 0.2
+    },
+    {
+      "gamma": 0.0,
+      "epsilon": 0.4
+    },
+    {
+      "gamma": 0.0,
+      "epsilon": 0.6
+    },
+    {
+      "gamma": 0.0,
+      "epsilon": 0.8
+    },
+    {
+      "gamma": 0.2,
+      "epsilon": 0.0
+    },
+    {
+      "gamma": 0.2,
+      "epsilon": 0.2
+    },
+    {
+      "gamma": 0.2,
+      "epsilon": 0.4
+    },
+    {
+      "gamma": 0.2,
+      "epsilon": 0.6
+    },
+    {
+      "gamma": 0.2,
+      "epsilon": 0.8
+    },
+    {
+      "gamma": 0.4,
+      "epsilon": 0.0
+    },
+    {
+      "gamma": 0.4,
+      "epsilon": 0.2
+    },
+    {
+      "gamma": 0.4,
+      "epsilon": 0.4
+    },
+    {
+      "gamma": 0.4,
+      "epsilon": 0.6
+    },
+    {
+      "gamma": 0.4,
+      "epsilon": 0.8
+    },
+    {
+      "gamma": 0.6,
+      "epsilon": 0.0
+    },
+    {
+      "gamma": 0.6,
+      "epsilon": 0.2
+    },
+    {
+      "gamma": 0.6,
+      "epsilon": 0.4
+    },
+    {
+      "gamma": 0.6,
+      "epsilon": 0.6
+    },
+    {
+      "gamma": 0.6,
+      "epsilon": 0.8
+    },
+    {
+      "gamma": 0.8,
+      "epsilon": 0.0
+    },
+    {
+      "gamma": 0.8,
+      "epsilon": 0.2
+    },
+    {
+      "gamma": 0.8,
+      "epsilon": 0.4
+    },
+    {
+      "gamma": 0.8,
+      "epsilon": 0.6
+    },
+    {
+      "gamma": 0.8,
+      "epsilon": 0.8
+    },
+    {
+      "gamma": 1.0,
+      "epsilon": 0.0
+    },
+    {
+      "gamma": 1.0,
+      "epsilon": 0.2
+    },
+    {
+      "gamma": 1.0,
+      "epsilon": 0.4
+    },
+        {
+      "gamma": 1.0,
+      "epsilon": 0.6
+    },
+        {
+      "gamma": 1.0,
+      "epsilon": 0.8
+    }
+  ]
+}
