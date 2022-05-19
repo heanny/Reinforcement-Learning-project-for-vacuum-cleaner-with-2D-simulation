@@ -32,9 +32,13 @@ class MC:
         possible_tiles = robot.possible_tiles_after_move()
         reward = possible_tiles[coordinate]
         if reward == 3:
-            reward = -2
+            reward = -3
         if reward == -2:
             reward = -1
+        if reward == 0:
+            reward = 0
+        if 3 > reward >= 1:
+            reward = 1
         # take action
         while not action == robot.orientation:
             # If we don't have the wanted orientation, rotate clockwise until we do:
@@ -63,7 +67,7 @@ class MC:
         return Q
 
 
-    def generate_episode(self,policy): #,transformation
+    def generate_episode(self,policy):
 
         episode = []
         robot_copy = deepcopy(self.robot)
@@ -77,7 +81,6 @@ class MC:
             # use policy to choose action given state
             policy_of_current_state = policy[:, i, j]
 
-            #can we not use the policy_of_current_state for p in action choice?
             action = np.random.choice(self.directions, p=policy_of_current_state)
 
             # simulate and get s' and r
