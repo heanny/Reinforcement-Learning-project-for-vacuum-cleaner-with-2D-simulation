@@ -16,7 +16,6 @@ def on_policy_mc_control(MC):
     n_rows = robot.grid.n_cols
     dirs = robot.dirs
     # initialization
-    Q_tmp = deepcopy(MC.Q)
     policy = MC.policy
     epsilon = MC.epsilon
     # repeat for l iterations:
@@ -24,7 +23,8 @@ def on_policy_mc_control(MC):
         # generate an episode
         episode = MC.generate_episode(policy)
         # Update Q table for each (s,a) in episode
-        Q_tmp = MC.Q_table(episode)
+        MC.Q_table(episode)
+        Q_tmp = MC.Q
         for item in episode:  # item: (state,action,reward)
             state = item[0]
             # List of Q values of actions correspond to this state
