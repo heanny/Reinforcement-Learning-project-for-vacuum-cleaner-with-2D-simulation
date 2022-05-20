@@ -50,7 +50,7 @@ def robot_epoch(robot):
     # initial TD class
     model_free = TD(robot)
     # use parameter alpha, gamma, epsilon and episodes to start Q-learning algorithm and get optimal policy
-    optimal_policy = Q_learning(model_free, 0.1, 1, 0.3, 300)
+    optimal_policy = Q_learning(model_free, alpha=0.1, gamma=1, epsilon=0.3, episodes=300)
     policy_of_current_state = optimal_policy[:, robot.pos[0], robot.pos[1]]
     indices = np.where(policy_of_current_state == np.max(policy_of_current_state))[0]
     probability = []
