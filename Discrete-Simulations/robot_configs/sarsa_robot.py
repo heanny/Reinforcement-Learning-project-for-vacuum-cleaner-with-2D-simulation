@@ -5,8 +5,7 @@ from td import TD
 
 def sarsa(model_free, alpha, gamma, epsilon, episodes):
     """
-    using MC class model_free, learning rate alpha, gamma, epsilon, and episodes
-    to implement the SARSA algorithm
+    This function implement the TD on-policy control(sarsa)
     :param model_free: temporal difference class TD from td.py
     :param alpha: the learning rate
     :param gamma: discounted factor
