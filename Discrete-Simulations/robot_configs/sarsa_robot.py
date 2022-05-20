@@ -55,9 +55,9 @@ def sarsa(model_free, alpha, gamma, epsilon, episodes):
 def robot_epoch(robot):
     # initial TD class
     model_free = TD(robot)
-    # The optimal parameter is alpha=0.1, gamma=0.8, epsilon=0.2 (or 0.0, they have comparable performance)
+    # The optimal parameter is alpha=0.4, gamma=0.8, epsilon=0.2 (or 0.0, they have comparable performance)
     # the optimal policy is the policy we get from SARSA algorithm
-    optimal_policy = sarsa(model_free, 0.1, 0.8, 0.2, 500)
+    optimal_policy = sarsa(model_free, 0.4, 0.8, 0.2, 500)
     policy_of_current_state = optimal_policy[:, robot.pos[0], robot.pos[1]]
     indices = np.where(policy_of_current_state == np.max(policy_of_current_state))[0]
     probability = []
