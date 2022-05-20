@@ -1,7 +1,7 @@
 # Import our robot algorithm to use in this simulation:
 from robot_configs.monte_carlo_robot_off_policy import robot_epoch
 #from robot_configs.sarsa_robot import robot_epoch
-from robot_configs.Q_learning_robot import robot_epoch
+#from robot_configs.Q_learning_robot import robot_epoch
 #from robot_configs.policy_iteration_robot import robot_epoch
 #from robot_configs.value_iteration_robot import robot_epoch
 #from robot_configs.monte_carlo_robot_on_policy import robot_epoch
@@ -35,7 +35,7 @@ for i in range(50):
     # Calculate the total visitable tiles:
     n_total_tiles = (grid.cells >= 0).sum()
     # Spawn the robot at (1,1) facing north with battery drainage enabled:
-    robot = Robot(grid, (1, 1), orientation='n', battery_drain_p=0.5, battery_drain_lam=2)
+    robot = Robot(grid, (1, 1), orientation='n', battery_drain_p=0, battery_drain_lam=0)
     # Keep track of the number of robot decision epochs:
     n_epochs = 0
     while True:
