@@ -18,8 +18,8 @@ class MC:
         self.D = 0  # denominator of Q(s,a)
         self.policy = np.full((4,self.n_rows, self.n_cols),0.25) # initializing the policy matrix, which corresponds to epsilon-soft policy
         self.directions = ['n', 'e', 's', 'w']
-        self.direction_index_map = {'n': 0, 'e': 1, 's': 2, 'w': 3} # list index corresponds to direction name
-        self.trans_dirs = {(-1, 0):0, (0, 1): 1, (1, 0): 2, (0, -1):3} # list index corrrespond to direction coordinate
+        self.direction_index_map = robot.dirs # list index corresponds to direction name
+        self.trans_dirs = {(0, -1):0, (1, 0): 1, (0, 1): 2, (-1, 0):3} # list index corrrespond to direction coordinate
         self.Q = np.zeros((4,self.n_rows,self.n_cols)) # initializing Q table
         self.returns_sum = defaultdict(float)
         self.returns_count = defaultdict(float)
@@ -28,7 +28,6 @@ class MC:
     def simulation(self, robot, action): 
         """
         Simulate an action of the episode and give its corresponding reward.
-
         :param robot: the robot copy
         :param action: the proposed action
         :return robot.pos: the position of robot
@@ -54,7 +53,6 @@ class MC:
     def generate_episode(self,policy):
         """
         Generate an episode based on a policy.
-
         :param policy: the current policy
         :return episode: the generated episode (list of (state, action, reward))
         """
@@ -89,7 +87,6 @@ class MC:
     def Q_table(self, episode):
         """
         Generate Q_table based on the episode.
-
         :param episode: an episode (list of (state, action, reward))
         """
         # find unique state and action in an episode
