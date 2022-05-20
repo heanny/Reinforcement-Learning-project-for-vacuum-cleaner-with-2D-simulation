@@ -96,6 +96,7 @@ def robot_epoch(robot):
     Args:
         robot: the robot of our environment
     """
+    # The optimal parameter is gamma = 
     model_free = MC(robot,gamma=0.45, max_iteration=200)
     # the optimal policy is the policy we get from off-policy MC algorithm
     optimal_policy = off_policy_mc_control(model_free)
@@ -123,7 +124,7 @@ def robot_epoch_(robot,gamma):
     Args:
         robot: the robot of our environment
     """
-    model_free = MC(robot, gamma, max_iteration=200)
+    model_free = MC(robot, gamma, max_iteration=50)# '50': here to set the 200 iterations to get the heatmap of the report
     optimal_policy = off_policy_mc_control(model_free)
     policy_of_current_state = optimal_policy[:, robot.pos[0], robot.pos[1]]
     indices = np.where(policy_of_current_state == np.max(policy_of_current_state))[0]
