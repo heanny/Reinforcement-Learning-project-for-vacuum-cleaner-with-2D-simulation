@@ -7,14 +7,9 @@ from mc import MC
 def on_policy_mc_control(MC): 
     """
     Implement the on policy Monte Carlo control
-
     :param MC: the Monte Carlo class (from MC.py)
     :returns policy: the optimal policy
     """
-    robot = MC.robot
-    n_cols = robot.grid.n_rows
-    n_rows = robot.grid.n_cols
-    dirs = robot.dirs
     # initialization
     policy = MC.policy
     epsilon = MC.epsilon
@@ -25,6 +20,7 @@ def on_policy_mc_control(MC):
         # Update Q table for each (s,a) in episode
         MC.Q_table(episode)
         Q_tmp = MC.Q
+        policy_stable=True
         for item in episode:  # item: (state,action,reward)
             state = item[0]
             # List of Q values of actions correspond to this state
@@ -35,16 +31,23 @@ def on_policy_mc_control(MC):
             best_action_indices = np.where(A == Q_tmp[best_action, state[0], state[1]])
             # update policy with epsilon-greedy
             for action in range(4):
+                old_policy = policy[action, state[0], state[1]]
                 if action in best_action_indices[0]:
                     policy[action, state[0], state[1]] = (1 - epsilon) / len(best_action_indices[0]) + epsilon / 4
                 else:
                     policy[action, state[0], state[1]] = epsilon / 4
+                if policy[action, state[0], state[1]] != old_policy:
+                    policy_stable=False
+        if  policy_stable== True:
+            print("converged")
+            print(l)
+            break    
     return policy
 
 # The robot epoch function for single processing
 def robot_epoch(robot):
     # load MC model from class
-    model_free = MC(robot,gamma=0.6,epsilon=0.6,max_iteration=100)
+    model_free = MC(robot,gamma=0.6,epsilon=0.6,max_iteration=200)
     # the optimal policy after Monte Carlo
     optimal_policy = on_policy_mc_control(model_free)
     policy_of_current_state = optimal_policy[:, robot.pos[0], robot.pos[1]]
@@ -67,7 +70,7 @@ def robot_epoch(robot):
 # The robot epoch function for multiple processing
 def robot_epoch_(robot,gamma,epsilon):
     # load MC model from class
-    model_free = MC(robot,gamma,epsilon,max_iteration=100)
+    model_free = MC(robot,gamma,epsilon,max_iteration=200)
     # the optimal policy after Monte Carlo
     optimal_policy = on_policy_mc_control(model_free)
     policy_of_current_state = optimal_policy[:, robot.pos[0], robot.pos[1]]
