@@ -28,7 +28,6 @@ class MC:
     def simulation(self, robot, action): 
         """
         Simulate an action of the episode and give its corresponding reward.
-
         :param robot: the robot copy
         :param action: the proposed action
         :return robot.pos: the position of robot
@@ -54,7 +53,6 @@ class MC:
     def generate_episode(self,policy):
         """
         Generate an episode based on a policy.
-
         :param policy: the current policy
         :return episode: the generated episode (list of (state, action, reward))
         """
@@ -63,7 +61,7 @@ class MC:
         # frequency: the number of times that the tile is visited
         frequency = np.zeros((robot_copy.grid.n_cols, robot_copy.grid.n_rows))
         # condition: robot is alive; not terminated; and the tile is visited no more than three times
-        while robot_copy.alive and np.max(robot_copy.grid.cells) > 0 and np.max(frequency) < 3:
+        while robot_copy.alive and np.max(robot_copy.grid.cells) > 0 and np.max(frequency) < 13:
             # current state
             state = robot_copy.pos
             i = state[0]
@@ -82,7 +80,6 @@ class MC:
     def Q_table(self, episode):
         """
         Generate Q_table based on the episode.
-
         :param episode: an episode (list of (state, action, reward))
         """
         # find unique state and action in an episode
