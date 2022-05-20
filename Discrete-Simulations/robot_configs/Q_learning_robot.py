@@ -50,7 +50,8 @@ def robot_epoch(robot):
     # initial TD class
     model_free = TD(robot)
     # use parameter alpha, gamma, epsilon and episodes to start Q-learning algorithm and get optimal policy
-    optimal_policy = Q_learning(model_free, alpha=0.1, gamma=1, epsilon=0.3, episodes=300)
+    # the optimal policy is the policy we get from Q-learning algorithm
+    optimal_policy = Q_learning(model_free, alpha=0.3, gamma=0.2, epsilon=0.4, episodes=500)# this is the optimal parameter settings for app.py
     policy_of_current_state = optimal_policy[:, robot.pos[0], robot.pos[1]]
     indices = np.where(policy_of_current_state == np.max(policy_of_current_state))[0]
     probability = []
@@ -72,7 +73,7 @@ def robot_epoch_(robot, lr, gamma, epsilon):
     # initial TD class
     model_free = TD(robot)
     # use parameter alpha, gamma, epsilon and episodes to start Q-learning algorithm and get optimal policy
-    optimal_policy = Q_learning(model_free, lr, gamma, epsilon, 500)
+    optimal_policy = Q_learning(model_free, lr, gamma, epsilon, 500)# '500': here to set the smaller iterations to get the heatmap.
     policy_of_current_state = optimal_policy[:, robot.pos[0], robot.pos[1]]
     indices = np.where(policy_of_current_state == np.max(policy_of_current_state))[0]
     probability = []
