@@ -7,7 +7,6 @@ from mc import MC
 def on_policy_mc_control(MC): 
     """
     Implement the on policy Monte Carlo control
-
     :param MC: the Monte Carlo class (from MC.py)
     :returns policy: the optimal policy
     """
@@ -40,7 +39,7 @@ def on_policy_mc_control(MC):
 # The robot epoch function for single processing
 def robot_epoch(robot):
     # load MC model from class
-    model_free = MC(robot,gamma=0.6,epsilon=0.6,max_iteration=100)
+    model_free = MC(robot,gamma=0.6,epsilon=0.2,max_iteration=200)
     # the optimal policy after Monte Carlo
     optimal_policy = on_policy_mc_control(model_free)
     policy_of_current_state = optimal_policy[:, robot.pos[0], robot.pos[1]]
@@ -63,7 +62,7 @@ def robot_epoch(robot):
 # The robot epoch function for multiple processing
 def robot_epoch_(robot,gamma,epsilon):
     # load MC model from class
-    model_free = MC(robot,gamma,epsilon,max_iteration=100)
+    model_free = MC(robot,gamma,epsilon,max_iteration=200)
     # the optimal policy after Monte Carlo
     optimal_policy = on_policy_mc_control(model_free)
     policy_of_current_state = optimal_policy[:, robot.pos[0], robot.pos[1]]
