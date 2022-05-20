@@ -11,10 +11,6 @@ def on_policy_mc_control(MC):
     :param MC: the Monte Carlo class (from MC.py)
     :returns policy: the optimal policy
     """
-    robot = MC.robot
-    n_cols = robot.grid.n_rows
-    n_rows = robot.grid.n_cols
-    dirs = robot.dirs
     # initialization
     policy = MC.policy
     epsilon = MC.epsilon
