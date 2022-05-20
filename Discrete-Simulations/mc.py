@@ -63,7 +63,9 @@ class MC:
         # frequency: the number of times that the tile is visited
         frequency = np.zeros((robot_copy.grid.n_cols, robot_copy.grid.n_rows))
         # condition: robot is alive; not terminated; and the tile is visited no more than three times
-        while robot_copy.alive and np.max(robot_copy.grid.cells) > 0 and np.max(frequency) < 3:
+        # is the episodes terminate or not
+        not_finished = True
+        while robot_copy.alive and not_finished and np.max(frequency) < 3:
             # current state
             state = robot_copy.pos
             i = state[0]
@@ -75,8 +77,13 @@ class MC:
 
             # simulate and get s' and r
             next_state, reward = self.simulation(robot_copy, action)
-
             episode.append((state,action,reward))
+            
+            # judge the cleanness to see if episode is finished or not
+            clean = (robot_copy.grid.cells == 0).sum()
+            dirty = (robot_copy.grid.cells >= 1).sum()
+            if clean/(clean+dirty) == 1:
+                not_finished = False
         return episode
 
     def Q_table(self, episode):
