@@ -68,12 +68,34 @@ def robot_epoch(robot):
     # Move:
     robot.move()
 
-# The robot epoch function for multiple processing
+# The robot_epoch_ function is for multiple processing
 def robot_epoch_(robot, lr, gamma, epsilon):
     # initial TD class
     model_free = TD(robot)
     # use parameter alpha, gamma, epsilon and episodes to start Q-learning algorithm and get optimal policy
     optimal_policy = Q_learning(model_free, lr, gamma, epsilon, 200)# '200': here to set the 500 iterations to get the heatmap of our report.
+    policy_of_current_state = optimal_policy[:, robot.pos[0], robot.pos[1]]
+    indices = np.where(policy_of_current_state == np.max(policy_of_current_state))[0]
+    probability = []
+    for index in range(0, 4):
+        if index in indices:
+            probability.append(1/len(indices))
+        else:
+            probability.append(0)
+    # based on optimal policy choose an action
+    direction = choice(model_free.directions, p=probability)
+    while not direction == robot.orientation:
+        # If we don't have the wanted orientation, rotate clockwise until we do:
+        robot.rotate('r')
+    # Move:
+    robot.move()
+    
+# The robot_epoch_a function for headless average
+def robot_epoch_a(robot):
+    # initial TD class
+    model_free = TD(robot)
+    # use parameter alpha, gamma, epsilon and episodes to start Q-learning algorithm and get optimal policy
+    optimal_policy = Q_learning(model_free, alpha=0.5, gamma=0.2, epsilon=0.2, episodes=200)# '200': here to set the 500 iterations to get the heatmap of our report.
     policy_of_current_state = optimal_policy[:, robot.pos[0], robot.pos[1]]
     indices = np.where(policy_of_current_state == np.max(policy_of_current_state))[0]
     probability = []
