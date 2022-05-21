@@ -124,54 +124,54 @@
   "learning_rate_sarsa": [
     {
       "lr": 0.1,
-      "gamma": 0.8,
-      "epsilon": 0.0
+      "gamma": 1.0,
+      "epsilon": 0.2
     },
     {
       "lr": 0.2,
-      "gamma": 0.8,
-      "epsilon": 0.0
+      "gamma": 1.0,
+      "epsilon": 0.2
     },
     {
       "lr": 0.3,
-      "gamma": 0.8,
-      "epsilon": 0.0
+      "gamma": 1.0,
+      "epsilon": 0.2
     },
     {
       "lr": 0.4,
-      "gamma": 0.8,
-      "epsilon": 0.0
+      "gamma": 1.0,
+      "epsilon": 0.2
     },
     {
       "lr": 0.5,
-      "gamma": 0.8,
-      "epsilon": 0.0
+      "gamma": 1.0,
+      "epsilon": 0.2
     }
   ],  "learning_rate_Q": [
     {
       "lr": 0.1,
       "gamma": 0.2,
-      "epsilon": 0.4
+      "epsilon": 0.2
     },
     {
       "lr": 0.2,
       "gamma": 0.2,
-      "epsilon": 0.4
+      "epsilon": 0.2
     },
     {
       "lr": 0.3,
       "gamma": 0.2,
-      "epsilon": 0.4
+      "epsilon": 0.2
     },
       {
       "lr": 0.4,
       "gamma": 0.2,
-      "epsilon": 0.4
+      "epsilon": 0.2
     },
       {
       "lr": 0.5,
       "gamma": 0.2,
-      "epsilon": 0.4
+      "epsilon": 0.2
     }
   ], "gamma_off_policy_MC": [
   {
