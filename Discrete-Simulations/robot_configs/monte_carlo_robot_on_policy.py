@@ -40,7 +40,7 @@ def on_policy_mc_control(MC):
 def robot_epoch(robot):
     # load MC model from class
     # gamma=0.6,epsilon=0.2 are optimal for app.py
-    model_free = MC(robot,gamma=0.6,epsilon=0.2,max_iteration=120) 
+    model_free = MC(robot,gamma=0.6,epsilon=0.2,max_iteration=200) 
     # the optimal policy after Monte Carlo
     optimal_policy = on_policy_mc_control(model_free)
     policy_of_current_state = optimal_policy[:, robot.pos[0], robot.pos[1]]
