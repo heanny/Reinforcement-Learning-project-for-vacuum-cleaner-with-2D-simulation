@@ -13,12 +13,12 @@ import seaborn as sns
 
 # Please read the README before using this to generate the heatmap and line chart.
 # We did our experiments on Macbook Pro with M1 pro chip, which has 10-core CPU and 16-core GPU.
-# Tuning the gamma and epsilon for Q-learning and Sarsa with single_para_flag = False and TD_algo = True
-# Tuning the learning rate for Q-learning and Sarsa with single_para_flag = Ture and TD_algo = True
-# Tuning the gamma and epsilon for Monte Carlo on-policy version with single_para_flag = False and TD_algo = False
-# Tuning the gamma for Monte Carlo off-policy version with single_para_flag = True and TD_algo = False
+# Tuning the gamma and epsilon for Q-learning and Sarsa with single_para_flag == False and TD_algo == True
+# Tuning the learning rate for Q-learning and Sarsa with single_para_flag == Ture and TD_algo == True
+# Tuning the gamma and epsilon for Monte Carlo on-policy version with single_para_flag == True and TD_algo == False
+# Tuning the gamma for Monte Carlo off-policy version with single_para_flag == False and TD_algo == False
 
-TD_algo = True
+TD_algo = False
 single_para_flag = True
 
 def experiment(lr, gamma, epsilon, procnum, return_dict):
@@ -41,6 +41,7 @@ def experiment(lr, gamma, epsilon, procnum, return_dict):
     cleaned = []
     # Run 100 times:
     start_time = time.time()
+    # 50 runs per robot
     for i in range(50):
     # Open the grid file.
     # (You can create one yourself using the provided editor).
@@ -151,13 +152,13 @@ if __name__ == '__main__':
             p.start()
 
     # Tuning the gamma and epsilon for Monte Carlo on-policy version
-    elif single_para_flag == True and TD_algo == True:
+    elif single_para_flag == False and TD_algo == False:
         for procnum in range(len(para)):
             p = multiprocessing.Process(target=experiment, args=(0, para[procnum]['gamma'], para[procnum]['epsilon'], procnum, return_dict))
             processes.append(p)
             p.start()
 
-    # Tuning the gamma for Monte Carlo on-policy version
+    # Tuning the gamma for Monte Carlo off-policy version
     else:
         for procnum in range(len(para_gamma_op)):
             p = multiprocessing.Process(target=experiment, args=(0, para_gamma_op[procnum]['gamma'], 0, procnum, return_dict))
@@ -167,15 +168,14 @@ if __name__ == '__main__':
     for proc in processes:
         proc.join()
 
-    # plot the heatmap for efficiency of gamma and epsilon tuning
     if single_para_flag == False:
-
+        # plot the heatmap for efficiency of gamma and epsilon tuning for on-policy MC
         # Sort the results since processors finish at different time
         sorted_return_dict = dict(sorted(return_dict.items()))
         a = sorted_return_dict
         for i in range(len(a)):
-            time_list.append(a[i][2])
-            clean_list.append(a[i][2])
+            time_list.append(a[i][0])
+            clean_list.append(a[i][1])
             eff_list.append(a[i][2])
 
         # save results as the matrix format
@@ -186,7 +186,7 @@ if __name__ == '__main__':
         eff_matrix = np.array(eff_list).reshape((6, 5))
 
         # plot the heatmap for efficiency
-        ax = sns.heatmap(eff_matrix, xticklabels=epsilon_info, yticklabels=gamma_info, annot=True)
+        ax = sns.heatmap(eff_matrix, xticklabels=epsilon_info, yticklabels=gamma_info, annot=True, cmap="Blues")
         ax.set(xlabel='Epsilon', ylabel='Gamma')
         ax.set_title('Efficiency(%)')
         plt.show()
@@ -196,8 +196,8 @@ if __name__ == '__main__':
             sorted_return_dict = dict(sorted(return_dict.items()))
             a = sorted_return_dict
             for i in range(len(a)):
-                time_list.append(a[i][2])
-                clean_list.append(a[i][2])
+                time_list.append(a[i][0])
+                clean_list.append(a[i][1])
                 eff_list.append(a[i][2])
             print("average_time", time_list)
             print("average_cleanliness", clean_list)
@@ -205,6 +205,9 @@ if __name__ == '__main__':
             sns.set_context("paper")
             ax = sns.lineplot(x=gamma_info, y=eff_list, marker='o')
             ax.set(xlabel='Gamma', ylabel='efficiency(%)')
+            # Annotate label points
+            for i, point in enumerate(eff_list):
+                plt.annotate(point, (gamma_info[i], eff_list[i]))
             ax.set_title('Efficiency(%)')
             plt.show()
 
@@ -213,8 +216,8 @@ if __name__ == '__main__':
             sorted_return_dict = dict(sorted(return_dict.items()))
             a = sorted_return_dict
             for i in range(len(a)):
-                time_list.append(a[i][2])
-                clean_list.append(a[i][2])
+                time_list.append(a[i][0])
+                clean_list.append(a[i][1])
                 eff_list.append(a[i][2])
             print("average_time", time_list)
             print("average_cleanliness", clean_list)
@@ -222,5 +225,8 @@ if __name__ == '__main__':
             sns.set_context("paper")
             ax = sns.lineplot(x=alpha_info, y=eff_list, marker='o')
             ax.set(xlabel='learning rate(alpha)', ylabel='efficiency(%)')
+            # Annotate label points
+            for i, point in enumerate(eff_list):
+                plt.annotate(point, (alpha_info[i], eff_list[i]))
             ax.set_title('Efficiency(%) for different learning rates')
             plt.show()
