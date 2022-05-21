@@ -161,7 +161,8 @@ def policy_iteration(robot,transformation):
     policy_stable = False
     # start iteration
     while not policy_stable:
-        values = policy_evaluation(dirs, rewards, values, policy, gamma=1, theta=20, max_iterations=1e9)
+        # optimal parameters gamma=0.5, theta = 2.1
+        values = policy_evaluation(dirs, rewards, values, policy, gamma=0.5, theta=2.1, max_iterations=1000)
         policy, policy_stable = policy_improvement(dirs, rewards, values, policy, gamma=1)
     return policy
 
