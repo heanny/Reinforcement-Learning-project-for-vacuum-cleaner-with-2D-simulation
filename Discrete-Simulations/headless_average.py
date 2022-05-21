@@ -1,8 +1,7 @@
-# Import our robot algorithm to use in this simulation:
-from robot_configs.monte_carlo_robot_off_policy import robot_epoch_a
-#from robot_configs.monte_carlo_robot_on_policy import robot_epoch_a
-#from robot_configs.sarsa_robot import robot_epoch_a
-#from robot_configs.Q_learning_robot import robot_epoch_a
+from robot_configs.monte_carlo_robot_off_policy import robot_epoch_a # delete"_a" for original experiments settings which takes longer time
+#from robot_configs.monte_carlo_robot_on_policy import robot_epoch_a # delete"_a" for original experiments settings which takes longer time
+#from robot_configs.sarsa_robot import robot_epoch_a # delete"_a" for original experiments settings which takes longer time
+#from robot_configs.Q_learning_robot import robot_epoch_a # delete"_a" for original experiments settings which takes longer time
 #from robot_configs.policy_iteration_robot import robot_epoch
 #from robot_configs.value_iteration_robot import robot_epoch
 import pickle
@@ -10,6 +9,7 @@ import time
 import numpy as np
 from environment import Robot
 
+# Please delete"_a" for each "robot_epoch_a" if you would like to run our original settings for experiments, which will take longer to finish.
 # This headless is used for getting the average efficiency and runtime of each robot on house grid
 # Please uncomment the robot you would like to test and comment other robots out.
 # If you would like to try monte carlo robot, please go to line 28 and 38 to change the battery setting and runs with few efforts.
