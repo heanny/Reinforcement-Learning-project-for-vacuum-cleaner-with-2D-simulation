@@ -39,7 +39,8 @@ def on_policy_mc_control(MC):
 # The robot epoch function for single processing
 def robot_epoch(robot):
     # load MC model from class
-    model_free = MC(robot,gamma=0.6,epsilon=0.2,max_iteration=200)
+    # gamma=0.6,epsilon=0.2 are optimal for app.py
+    model_free = MC(robot,gamma=0.6,epsilon=0.2,max_iteration=120) 
     # the optimal policy after Monte Carlo
     optimal_policy = on_policy_mc_control(model_free)
     policy_of_current_state = optimal_policy[:, robot.pos[0], robot.pos[1]]
@@ -62,7 +63,7 @@ def robot_epoch(robot):
 # The robot epoch function for multiple processing
 def robot_epoch_(robot,gamma,epsilon):
     # load MC model from class
-    model_free = MC(robot,gamma,epsilon,max_iteration=200)
+    model_free = MC(robot,gamma,epsilon,max_iteration=100)# '100': here to set the smaller iterations to get the heatmap.
     # the optimal policy after Monte Carlo
     optimal_policy = on_policy_mc_control(model_free)
     policy_of_current_state = optimal_policy[:, robot.pos[0], robot.pos[1]]
