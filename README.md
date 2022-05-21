@@ -11,7 +11,7 @@ Dear reader,
 	Here we provide how to run our codes. 
 	- You can simply using the `"app.py"` to check the robot, and the default parameter settings for each robot are optimal paramters we found from our experiments. 
 	- Please use two headless files we provided as following to test. It is easy to run and reproduce our results with few efforts in `"headless_multiple_processor.py"` and `"headless_average.py"` (with default settings), but may have some performance loss since we use more runs and episode in experiments to make our results valid and correct. The original` "headless.py"` uses the optimal settings with 100 runs, which would cost a lot of time on some robots, so it is not recommended to use it and we did not run our experiments by this file. 
-	- Please directly use our `"headless_multiple_processor.py"` and `"headless_average.py"` by **clicking the "run" button in IDE** under the following guiding. 
+	- Please directly use our `"headless_multiple_processor.py"` and `"headless_average.py"` by **clicking the "run" button in IDE** or running in command line interface. Please make sure to use the following guideline as well.
 
 * **Reproduce**
 	* **Heatmap**
