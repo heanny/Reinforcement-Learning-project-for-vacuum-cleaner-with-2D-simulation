@@ -2,8 +2,8 @@ from robot_configs.monte_carlo_robot_off_policy import robot_epoch_a # delete"_a
 #from robot_configs.monte_carlo_robot_on_policy import robot_epoch_a # delete"_a" for original experiments settings which takes longer time
 #from robot_configs.sarsa_robot import robot_epoch_a # delete"_a" for original experiments settings which takes longer time
 #from robot_configs.Q_learning_robot import robot_epoch_a # delete"_a" for original experiments settings which takes longer time
-#from robot_configs.policy_iteration_robot import robot_epoch
-#from robot_configs.value_iteration_robot import robot_epoch
+#from robot_configs.policy_iteration_robot import robot_epoch # if this, please go to line 44 to delete two characters
+#from robot_configs.value_iteration_robot import robot_epoch # if this, please go to line 44 to delete two characters
 import pickle
 import time
 import numpy as np
@@ -12,7 +12,7 @@ from environment import Robot
 # Please delete"_a" for each "robot_epoch_a" if you would like to run our original settings for experiments, which will take longer to finish.
 # This headless is used for getting the average efficiency and runtime of each robot on house grid
 # Please uncomment the robot you would like to test and comment other robots out.
-# If you would like to try monte carlo robot, please go to line 28 and 38 to change the battery setting and runs with few efforts.
+# If you would like to try monte carlo robot, please go to line 28 and 38 to change battery and runs with few efforts. 
 # Note that the off-policy MC robot may take more than 2 hours to finish, but our report results are valid since we test 50 runs per robot.
 
 grid_file = 'house.grid'
@@ -41,7 +41,7 @@ for i in range(n):# change "range(10)" in line 30 for MC robots for fewer runs t
     while True:
         n_epochs += 1
         # Do a robot epoch (basically call the robot algorithm once):
-        robot_epoch(robot)
+        robot_epoch_a(robot)# please delete "_a" to run policy and value iteration robot.
         # Stop this simulation instance if robot died :( :
         if not robot.alive:
             deaths += 1
