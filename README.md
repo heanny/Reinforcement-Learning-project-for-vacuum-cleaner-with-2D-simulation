@@ -10,8 +10,8 @@ Dear reader,
 
 	Here we provide how to run our codes. 
 	- You can simply using the `"app.py"` to check the robot, and the default parameter settings for each robot are optimal paramters we found from our experiments. 
-	- The original` "headless.py"` can also be used as the common way to check the performance of our robots by uncommenting the robot import you want and commenting out other robot imports. 
-	- Since the original "headless.py" uses the optimal settings with 100 runs, which would cost a lot of time on some robots, so we also recommend you to use other headless we provided as following to test. It is easy to test and reproduce our results with few efforts in `"headless_multiple_processor.py"` and `"headless_average.py"` (with default settings), but may have some performance loss since we use more runs and episode in experiments to make our results valid and correct. 
+	- The original` "headless.py"` can also be used as the common way to check the performance of our robots by uncommenting the robot import you want and commenting out other robot imports. Since the original "headless.py" uses the optimal settings with 100 runs, which would cost a lot of time on some robots, so we also recommend you to use other headless we provided as following to test.
+	- It is easy to test and reproduce our results with few efforts in `"headless_multiple_processor.py"` and `"headless_average.py"` (with default settings), but may have some performance loss since we use more runs and episode in experiments to make our results valid and correct. 
 
 * **Reproduce**
 	* **Heatmap**
