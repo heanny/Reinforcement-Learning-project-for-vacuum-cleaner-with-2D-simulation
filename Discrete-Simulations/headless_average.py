@@ -1,10 +1,10 @@
 # Import our robot algorithm to use in this simulation:
-from robot_configs.monte_carlo_robot_off_policy import robot_epoch
-#from robot_configs.sarsa_robot import robot_epoch
-#from robot_configs.Q_learning_robot import robot_epoch
-#from robot_configs.policy_iteration_robot import robot_epoch
-#from robot_configs.value_iteration_robot import robot_epoch
-#from robot_configs.monte_carlo_robot_on_policy import robot_epoch
+from robot_configs.monte_carlo_robot_off_policy import robot_epoch_a
+#from robot_configs.sarsa_robot import robot_epoch_a
+#from robot_configs.Q_learning_robot import robot_epoch_a
+#from robot_configs.policy_iteration_robot import robot_epoch_a
+#from robot_configs.value_iteration_robot import robot_epoch_a
+#from robot_configs.monte_carlo_robot_on_policy import robot_epoch_a
 import pickle
 import time
 import numpy as np
