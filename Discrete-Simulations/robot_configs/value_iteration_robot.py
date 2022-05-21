@@ -56,8 +56,8 @@ def Value_iteration(n,gamma,robot,transformation):
     # get reward matrix
     rewards = get_current_rewards(robot.grid.cells,transformation)
 
-    # set the value of theta
-    theta = 5
+    # set the optimal value of theta = 2.1
+    theta = 2.1
 
     rewards_n_rows = rewards.shape[0]
     rewards_n_cols = rewards.shape[1]
@@ -122,8 +122,8 @@ def robot_epoch(robot):
     history = np.where(history < 99, history, 99)
     transformation = np.where(history==0, history, -0.01*history)
 
-    # get current state's optimal policy
-    optimal_policy = Value_iteration(1000,1,robot,np.round(transformation,5))
+    # get current state's optimal policy, set the optimal gamma = 0.5
+    optimal_policy = Value_iteration(1000,0.5,robot,np.round(transformation,5))
     policy_of_current_pos = optimal_policy[robot.pos[0]][robot.pos[1]]
     direction = random.choices(list(policy_of_current_pos.keys()), weights=policy_of_current_pos.values(), k=1)[0]
     while direction != robot.orientation:
