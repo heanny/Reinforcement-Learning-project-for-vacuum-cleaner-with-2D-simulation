@@ -4,7 +4,7 @@ Dear reader,
 
 The required packages in our implementation are included in the requirements.txt, please make sure you correctly install them. Here we provide how to run our codes. You can simply using the "app.py" to check the robot, and the default parameter settings for each robot are optimal paramters we found from our experiments. The original "headless.py" can also be used as the commen way to check the performance of our robots by uncommenting the robot import you want and commenting out other robot imports. Since the original "headless.py" uses the optimal settings with 100 runs, which would cost a lot of time on some robots, so we also recommend you to use other headless we provided as following to test.
 
-But if you would like to get the heatmap figures and the line charts for the similar results, you can run "headless_multiple_processor.py" for parameter tuning of model-free algorithms. Our testing computer is Macbook Pro with M1 pro chip with 10-core CPU and 16-core GPU. 
+If you would like to get the heatmap figures and the line charts for the similar results, you can run "headless_multiple_processor.py" for parameter tuning of model-free algorithms. Our testing computer is Macbook Pro with M1 pro chip with 10-core CPU and 16-core GPU. 
 
 
 Here are some sepecific tutorial for running "headless_multiple_processor.py" as follows.
