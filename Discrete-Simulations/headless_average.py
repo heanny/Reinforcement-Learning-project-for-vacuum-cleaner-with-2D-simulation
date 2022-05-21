@@ -13,7 +13,7 @@ from environment import Robot
 
 # This headless is used for getting the average efficiency and runtime of each robot on house grid
 # Please uncomment the robot you would like to test and comment other robots out.
-
+# If you would like to try monte carlo robot, please go to line 38 to change the battery setting with few efforts.
 
 grid_file = 'house.grid'
 # Cleaned tile percentage at which the room is considered 'clean':
@@ -35,7 +35,7 @@ for i in range(50):
     # Calculate the total visitable tiles:
     n_total_tiles = (grid.cells >= 0).sum()
     # Spawn the robot at (1,1) facing north with battery drainage enabled:
-    robot = Robot(grid, (1, 1), orientation='n', battery_drain_p=0, battery_drain_lam=0)
+    robot = Robot(grid, (1, 1), orientation='n', battery_drain_p=0, battery_drain_lam=0) #please set battery_drain_p=0.5, battery_drain_lam=2.0 to make sure that one run stops in a short time. 
     # Keep track of the number of robot decision epochs:
     n_epochs = 0
     while True:
