@@ -5,7 +5,6 @@ from robot_configs.monte_carlo_robot_off_policy import robot_epoch
 #from robot_configs.policy_iteration_robot import robot_epoch
 #from robot_configs.value_iteration_robot import robot_epoch
 #from robot_configs.monte_carlo_robot_on_policy import robot_epoch
-
 import pickle
 import time
 import numpy as np
@@ -13,7 +12,8 @@ from environment import Robot
 
 # This headless is used for getting the average efficiency and runtime of each robot on house grid
 # Please uncomment the robot you would like to test and comment other robots out.
-# If you would like to try monte carlo robot, please go to line 38 to change the battery setting with few efforts.
+# If you would like to try monte carlo robot, please go to line 30 and 38 to change the battery setting with few efforts.
+# Note that the off-policy MC robot may take more than 2 hours to finish, but our report results are valid since we test 50 runs per robot.
 
 grid_file = 'house.grid'
 # Cleaned tile percentage at which the room is considered 'clean':
@@ -27,7 +27,7 @@ cleaned = []
 
 # Run 50 times:
 start_time = time.time()
-for i in range(50):
+for i in range(50):# change "range(20)" in line 30 for MC robots for fewer runs to show the results.
     # Open the grid file.
     # (You can create one yourself using the provided editor).
     with open(f'grid_configs/{grid_file}', 'rb') as f:
