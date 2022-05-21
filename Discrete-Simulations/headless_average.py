@@ -12,22 +12,21 @@ from environment import Robot
 
 # This headless is used for getting the average efficiency and runtime of each robot on house grid
 # Please uncomment the robot you would like to test and comment other robots out.
-# If you would like to try monte carlo robot, please go to line 30 and 38 to change the battery setting with few efforts.
+# If you would like to try monte carlo robot, please go to line 28 and 38 to change the battery setting and runs with few efforts.
 # Note that the off-policy MC robot may take more than 2 hours to finish, but our report results are valid since we test 50 runs per robot.
 
 grid_file = 'house.grid'
 # Cleaned tile percentage at which the room is considered 'clean':
 stopping_criteria = 100
-
 # Keep track of some statistics:
 efficiencies = []
 n_moves = []
 deaths = 0
 cleaned = []
-
-# Run 50 times:
+# 50 runs per robot
 start_time = time.time()
-for i in range(50):# change "range(10)" in line 30 for MC robots for fewer runs to show the results.
+n = 50 # change "n = 10" in line 28 for MC robots for fewer runs to show the results.
+for i in range(n):# change "range(10)" in line 30 for MC robots for fewer runs to show the results.
     # Open the grid file.
     # (You can create one yourself using the provided editor).
     with open(f'grid_configs/{grid_file}', 'rb') as f:
@@ -35,7 +34,8 @@ for i in range(50):# change "range(10)" in line 30 for MC robots for fewer runs 
     # Calculate the total visitable tiles:
     n_total_tiles = (grid.cells >= 0).sum()
     # Spawn the robot at (1,1) facing north with battery drainage enabled:
-    robot = Robot(grid, (1, 1), orientation='n', battery_drain_p=0, battery_drain_lam=0) #please set battery_drain_p=0.5, battery_drain_lam=1.0 to make sure that one run stops in a short time. 
+    #please set battery_drain_p=0.5, battery_drain_lam=1.0 in line 38 to make sure that one run stops in a short time. 
+    robot = Robot(grid, (1, 1), orientation='n', battery_drain_p=0, battery_drain_lam=0) 
     # Keep track of the number of robot decision epochs:
     n_epochs = 0
     while True:
@@ -68,7 +68,7 @@ for i in range(50):# change "range(10)" in line 30 for MC robots for fewer runs 
 end_time = time.time()
 
 #print out the average efficiency and runtime
-average_time = (end_time-start_time)/(50*60)
+average_time = (end_time-start_time)/(n*60)
 average_clean = np.mean(cleaned)
 average_eff = np.mean(efficiencies)
 print("average_time:",average_time)
