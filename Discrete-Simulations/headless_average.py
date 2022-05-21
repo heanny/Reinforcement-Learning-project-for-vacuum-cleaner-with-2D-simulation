@@ -5,14 +5,14 @@ from robot_configs.monte_carlo_robot_off_policy import robot_epoch
 #from robot_configs.policy_iteration_robot import robot_epoch
 #from robot_configs.value_iteration_robot import robot_epoch
 #from robot_configs.monte_carlo_robot_on_policy import robot_epoch
-#from robot_configs.monte_carlo_robot_off_policy import robot_epoch
+
 import pickle
 import time
 import numpy as np
 from environment import Robot
 
 # This headless is used for getting the average efficiency and runtime of each robot on house grid
-# Please uncomment the robot you would like to test and comment other robots.
+# Please uncomment the robot you would like to test and comment other robots out.
 
 
 grid_file = 'house.grid'
@@ -25,7 +25,7 @@ n_moves = []
 deaths = 0
 cleaned = []
 
-# Run 100 times:
+# Run 50 times:
 start_time = time.time()
 for i in range(50):
     # Open the grid file.
@@ -64,11 +64,11 @@ for i in range(50):
     efficiencies.append(float(efficiency))
     n_moves.append(len(robot.history[0]))
     cleaned.append(clean_percent)
-    print(i)
+    print(i+1,'run are done.')
 end_time = time.time()
 
 #print out the average efficiency and runtime
-average_time = (end_time-start_time)/(5*60)
+average_time = (end_time-start_time)/(50*60)
 average_clean = np.mean(cleaned)
 average_eff = np.mean(efficiencies)
 print("average_time:",average_time)
