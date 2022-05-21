@@ -24,7 +24,7 @@ Dear reader,
 		3. If you would like to obtain the linechart for tuning learning rate (alpha) for TD algorithms, please set `single_para_flag = True` and `TD_algo = True`;
 		4. If you would like to obtain the linechart for tuning gamma for off-policy Monte Carlo, please set `single_para_flag = True` and `TD_algo = False`;
 	
-		**Note:** Although we highly recommend you to choose smaller episode number (the default setting we give) for showing figures (heatmaps and line plots) in a short time (within two hours per algorithm), which has some performance loss, it is also welcome to obtain the highly similar figures as shown in our report. If you are interested in, please change the episode number for `"sarsa_robot.py"` and `"Q_learning_robot.py"` as 500 in `"robot_epoch"` function, and the episode number for both `Monte_Carlo_robot` files as 200 in `"robot_epoch"` function. We had the specific comment for it in `"robot_epoch"` funtion for each model-free robot.
+		**Note:** Although we highly recommend you to choose smaller episode number (the default setting we give) for showing figures (heatmaps and line plots) in a short time (within two hours per algorithm), which has some performance loss, it is also welcome to obtain the highly similar figures as shown in our report. If you are interested in, please change the episode number for `"sarsa_robot.py"` and `"Q_learning_robot.py"` as 500 in `"robot_epoch_"` function, and the episode number for both `Monte_Carlo_robot` files as 200 in `"robot_epoch_"` function. We had the specific comment for it in `"robot_epoch_"` funtion for each model-free robot.
 	
 	* **Table**
 	
