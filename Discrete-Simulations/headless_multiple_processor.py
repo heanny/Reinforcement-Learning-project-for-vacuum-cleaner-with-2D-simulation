@@ -39,7 +39,7 @@ def experiment(lr, gamma, epsilon, procnum, return_dict):
     n_moves = []
     deaths = 0
     cleaned = []
-    # Run 100 times:
+
     start_time = time.time()
     # 50 runs per robot
     for i in range(50):
@@ -205,7 +205,7 @@ if __name__ == '__main__':
             sns.set_context("paper")
             ax = sns.lineplot(x=gamma_info, y=eff_list, marker='o')
             ax.set(xlabel='Gamma', ylabel='efficiency(%)')
-            # Annotate label points
+            # Annotate the label for data points
             for i, point in enumerate(eff_list):
                 plt.annotate(point, (gamma_info[i], eff_list[i]))
             ax.set_title('Efficiency(%)')
@@ -225,7 +225,7 @@ if __name__ == '__main__':
             sns.set_context("paper")
             ax = sns.lineplot(x=alpha_info, y=eff_list, marker='o')
             ax.set(xlabel='learning rate(alpha)', ylabel='efficiency(%)')
-            # Annotate label points
+            # Annotate the label for data points
             for i, point in enumerate(eff_list):
                 plt.annotate(point, (alpha_info[i], eff_list[i]))
             ax.set_title('Efficiency(%) for different learning rates')
