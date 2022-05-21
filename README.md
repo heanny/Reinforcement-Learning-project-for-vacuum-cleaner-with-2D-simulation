@@ -2,16 +2,26 @@
 
 Dear reader,
 
-The required packages in our implementation are included in the requirements.txt, please make sure you correctly install them. Here we provide how to run our codes. You can simply using the "app.py" to check the robot, and the default parameter settings for each robot are optimal paramters we found from our experiments. The original "headless.py" can also be used as the commen way to check the performance of our robots by uncommenting the robot import you want and commenting out other robot imports. Since the original "headless.py" uses the optimal settings with 100 runs, which would cost a lot of time on some robots, so we also recommend you to use other headless we provided as following to test. It is easy to test and reproduce our results with few efforts in "headless_multiple_processor.py" and "headless_average.py" (with default settings), but may have some performance loss since we use more runs and episode in experiments to make our results valid and correct. 
+* **Requirement**
 
-If you would like to get the heatmap figures and the line charts for the similar results, you can run "headless_multiple_processor.py" for parameter tuning of model-free algorithms. Our testing computer is Macbook Pro with M1 pro chip (10-core CPU and 16-core GPU). 
+	The required packages in our implementation are included in the requirements.txt, please make sure you correctly install them. 
 
+* **Run the code**
 
-Here are some sepecific tutorial for running "headless_multiple_processor.py" as follows.
-1. If you would like to obtain the heatmap for tuning gamma and epsilon for TD algorithms, please set single_para_flag = False and TD_algo = True;
-2. If you would like to obtain the heatmap for tuning gamma and epsilon for on-policy Monte Carlo, please set single_para_flag = False and TD_algo = False;
-3. If you would like to obtain the linechart for tuning learning rate (alpha) for TD algorithms, please set single_para_flag = True and TD_algo = True;
-4. If you would like to obtain the linechart for tuning gamma for off-policy Monte Carlo, please set single_para_flag = True and TD_algo = False;
+	Here we provide how to run our codes. 
+	- You can simply using the `"app.py"` to check the robot, and the default parameter settings for each robot are optimal paramters we found from our experiments. 
+	- The original` "headless.py"` can also be used as the commen way to check the performance of our robots by uncommenting the robot import you want and commenting out other robot imports. 
+	- Since the original "headless.py" uses the optimal settings with 100 runs, which would cost a lot of time on some robots, so we also recommend you to use other headless we provided as following to test. It is easy to test and reproduce our results with few efforts in `"headless_multiple_processor.py"` and `"headless_average.py"` (with default settings), but may have some performance loss since we use more runs and episode in experiments to make our results valid and correct. 
+
+* **Reproduce**
+
+	If you would like to get the heatmap figures and the line charts for the similar results, you can run `"headless_multiple_processor.py"` for parameter tuning of model-free algorithms. Our testing computer is Macbook Pro with M1 pro chip (10-core CPU and 16-core GPU). 
+	
+	Here are some sepecific tutorial for running `"headless_multiple_processor.py"` as follows.
+	1. If you would like to obtain the heatmap for tuning gamma and epsilon for TD algorithms, please set `single_para_flag = False` and `TD_algo = True`;
+	2. If you would like to obtain the heatmap for tuning gamma and epsilon for on-policy Monte Carlo, please set `single_para_flag = False` and `TD_algo = False`;
+	3. If you would like to obtain the linechart for tuning learning rate (alpha) for TD algorithms, please set `single_para_flag = True` and `TD_algo = True`;
+	4. If you would like to obtain the linechart for tuning gamma for off-policy Monte Carlo, please set `single_para_flag = True` and `TD_algo = False`;
 
 
 #todo: 提交代码的时候，每个robot的robot_epoch_（有下划线）的episode都写成小的，方便sb运行多处理器的headless。
