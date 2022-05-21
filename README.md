@@ -26,7 +26,7 @@ We highly recommend you to choose smaller episode number (the default setting we
 
 If you would like to get the results of the table in our report, please use "headless_average.py" to test each robot (including the model-based robots) to get the average running time, average efficiency, and average cleanliness. Note that the default setting is to successfully get the result in a short running time with some performance loss, but is you are interested in getting the very similar results as shown in our table, please import the "robot_epoch" for the robot you would like test, which means you only need to delete the "\_a" in the import lines. There are some comments for guiding.
 
-Note that when running the "headless_multiple_processor.py" and "headless_average.py", please \textbf{uncomment the robot import} to run the robot you would like to test, and at the same time \textbf{comment} other robots import out. 
+Note that when running the "headless_multiple_processor.py" and "headless_average.py", please uncomment the robot import to run the robot you would like to test, and at the same time comment other robots import out. 
 
 
 Have fun! :)
