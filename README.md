@@ -36,17 +36,5 @@ Dear reader,
 
 	Note that when running the `"headless_multiple_processor.py"` and `"headless_average.py"`, please uncomment the robot import to run the robot you would like to test, and at the same time comment other robots import out. 
 
-#todo: 提交代码的时候，每个robot的robot_epoch_（有下划线）的episode都写成小的，方便sb运行多处理器的headless。
-
-#todo：提交代码的时候，episode在哪里改我们已经在comments中标注出来了，省得sb眼睛有问题找不到。
-
-#todo：提交代码的时候，每个robot的robot_epoch（无下划线）的参数都写成optimal的，方便sb运行app.py。
-
-#todo: 整理一遍需要的库，看看有没有不在list里面的。(已检查）
-
-#todo：提交代码的时候，每个robot的robot_epoch_a的参数都写成optimal的,有较小的episode，方便sb运行headless_average.py。(已检查）
-
-#todo：提交的时候，headless_comparisom, headless_policy, headless_value删掉。
-
 
 Have fun! :)
