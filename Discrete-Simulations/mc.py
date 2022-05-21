@@ -37,10 +37,18 @@ class MC:
         possible_tiles = robot.possible_tiles_after_move()
         reward = possible_tiles[coordinate]
         # give reward
-        if reward == 3: # death tile, give -2 to avoid robot reach it.
-            reward = -2
-        if reward == -2: # an obstacle, we think they have the same function of wall tiles, so we reset as -1
+        # the death tile has the reward of -3
+        if reward == 3:
+            reward = -3
+        # the wall and obstacle tiles have reward of -1
+        if reward == -2:
             reward = -1
+        # the cleaned tiles have reward of 0
+        if reward == 0:
+            reward = 0
+        # the goal and dirty tiles have reward of 1
+        if 3 > reward >= 1:
+            reward = 1
         # take action
         while not action == robot.orientation:
             # If we don't have the wanted orientation, rotate clockwise until we do:
