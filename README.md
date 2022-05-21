@@ -20,7 +20,9 @@ Here are some sepecific tutorial for running "headless_multiple_processor.py" as
 
 #todo：提交代码的时候，每个robot的robot_epoch（无下划线）的参数都写成optimal的，方便sb运行app.py。
 
-#todo: 整理一遍需要的库，看看有没有不在list里面的。
+#todo: 整理一遍需要的库，看看有没有不在list里面的。(已检查）
+
+#todo：提交代码的时候，每个robot的robot_epoch_a的参数都写成optimal的,有较小的episode，方便sb运行headless_average.py。
 
 We highly recommend you to choose smaller episode number (the default setting we give) for showing figures (heatmaps and line plots) in a short time (within two hours per algorithm), though with some performance loss. But if you are interested in getting the highly similar figures as shown in our report, please change the episode number for "sarsa_robot.py" and "Q_learning_robot.py" as 500 in "robot_epoch_" function, and the episode number for both Monte_Carlo_robot files as 200 in "robot_epoch_" function. We had the specific comment for it in "robot_epoch_" funtion for each model-free robot.
 
