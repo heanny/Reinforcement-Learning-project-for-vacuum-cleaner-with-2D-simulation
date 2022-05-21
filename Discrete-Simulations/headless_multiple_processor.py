@@ -15,8 +15,8 @@ import seaborn as sns
 # We did our experiments on Macbook Pro with M1 pro chip, which has 10-core CPU and 16-core GPU.
 # Tuning the gamma and epsilon for Q-learning and Sarsa with single_para_flag = False and TD_algo = True
 # Tuning the learning rate for Q-learning and Sarsa with single_para_flag = Ture and TD_algo = True
-# Tuning the gamma and epsilon for Monte Carlo on-policy version with single_para_flag = True and TD_algo = False
-# Tuning the gamma for Monte Carlo off-policy version with single_para_flag = False and TD_algo = False
+# Tuning the gamma and epsilon for Monte Carlo on-policy version with single_para_flag = False and TD_algo = False
+# Tuning the gamma for Monte Carlo off-policy version with single_para_flag = True and TD_algo = False
 
 TD_algo = True
 single_para_flag = True
