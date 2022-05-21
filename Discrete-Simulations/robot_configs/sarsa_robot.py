@@ -97,3 +97,25 @@ def robot_epoch_(robot, lr, gamma, epsilon):
         robot.rotate('r')
     # Move:
     robot.move()
+    
+# robot_epoch_a function is used for running the headless average 
+def robot_epoch_a(robot):
+    model_free = TD(robot)
+    # the optimal policy is the policy we get from SARSA algorithm
+    optimal_policy = sarsa(model_free, 0.1, 1.0, 0.2, 200)# '200': here to set the 500 iterations to get the table results of the report.
+    policy_of_current_state = optimal_policy[:, robot.pos[0], robot.pos[1]]
+    indices = np.where(policy_of_current_state == np.max(policy_of_current_state))[0]
+    probability = []
+    # we propose the move based on the optimal policy with equal probability for each direction if each state has more
+    # than one action of the optimal policy
+    for index in range(0, 4):
+        if index in indices:
+            probability.append(1 / len(indices))
+        else:
+            probability.append(0)
+    direction = choice(model_free.directions, p=probability)
+    while not direction == robot.orientation:
+        # If we don't have the wanted orientation, rotate clockwise until we do:
+        robot.rotate('r')
+    # Move:
+    robot.move()
