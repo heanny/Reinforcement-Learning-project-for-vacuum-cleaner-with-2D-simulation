@@ -124,7 +124,31 @@ def robot_epoch_(robot,gamma):
     Args:
         robot: the robot of our environment
     """
-    model_free = MC(robot, gamma, max_iteration=50)# '50': here to set the 200 iterations to get the heatmap of the report
+    model_free = MC(robot, gamma, max_iteration=50)# '50': here to set the 200 iterations to get the line plot in the report
+    optimal_policy = off_policy_mc_control(model_free)
+    policy_of_current_state = optimal_policy[:, robot.pos[0], robot.pos[1]]
+    indices = np.where(policy_of_current_state == np.max(policy_of_current_state))[0]
+    probability = []
+    for index in range(0, 4):
+        if index in indices:
+            probability.append(1/len(indices))
+        else:
+            probability.append(0)
+    direction = np.random.choice(model_free.directions, p=probability)
+    while not direction == robot.orientation:
+        # If we don't have the wanted orientation, rotate clockwise until we do:
+        robot.rotate('r')
+    # Move:
+    robot.move()
+    
+# we use robot_epoch_a to run the headless average
+def robot_epoch_a(robot):
+    """
+    propose the move of the robot based on the returned policy
+    Args:
+        robot: the robot of our environment
+    """
+    model_free = MC(robot, gamma=0.2, max_iteration=50)# '50': here to set the 200 iterations to get the similar result of the table in the report
     optimal_policy = off_policy_mc_control(model_free)
     policy_of_current_state = optimal_policy[:, robot.pos[0], robot.pos[1]]
     indices = np.where(policy_of_current_state == np.max(policy_of_current_state))[0]
