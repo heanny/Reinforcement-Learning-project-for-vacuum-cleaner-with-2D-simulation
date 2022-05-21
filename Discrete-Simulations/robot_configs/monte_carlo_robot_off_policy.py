@@ -96,8 +96,8 @@ def robot_epoch(robot):
     Args:
         robot: the robot of our environment
     """
-    # The optimal parameter is gamma = 
-    model_free = MC(robot,gamma=0.45, max_iteration=200)
+    # The optimal parameter is gamma = 0.2 for app.py
+    model_free = MC(robot,gamma=0.2, max_iteration=100)
     # the optimal policy is the policy we get from off-policy MC algorithm
     optimal_policy = off_policy_mc_control(model_free)
     policy_of_current_state = optimal_policy[:, robot.pos[0], robot.pos[1]]
