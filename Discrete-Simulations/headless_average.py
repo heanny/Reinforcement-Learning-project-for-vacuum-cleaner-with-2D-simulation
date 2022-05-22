@@ -1,7 +1,7 @@
-from robot_configs.monte_carlo_robot_off_policy import robot_epoch_a # delete"_a" for original experiments settings which takes longer time
-#from robot_configs.monte_carlo_robot_on_policy import robot_epoch_a # delete"_a" for original experiments settings which takes longer time
-#from robot_configs.sarsa_robot import robot_epoch_a # delete"_a" for original experiments settings which takes longer time
+from robot_configs.sarsa_robot import robot_epoch_a # delete"_a" for original experiments settings which takes longer time
 #from robot_configs.Q_learning_robot import robot_epoch_a # delete"_a" for original experiments settings which takes longer time
+#from robot_configs.monte_carlo_robot_off_policy import robot_epoch_a # delete"_a" for original experiments settings which takes longer time
+#from robot_configs.monte_carlo_robot_on_policy import robot_epoch_a # delete"_a" for original experiments settings which takes longer time
 #from robot_configs.policy_iteration_robot import robot_epoch # if this, please go to line 44 to delete two characters
 #from robot_configs.value_iteration_robot import robot_epoch # if this, please go to line 44 to delete two characters
 import pickle
@@ -9,11 +9,11 @@ import time
 import numpy as np
 from environment import Robot
 
-# Please delete"_a" for each "robot_epoch_a" if you would like to run our original settings for experiments, which will take longer to finish.
 # This headless is used for getting the average efficiency and runtime of each robot on house grid
 # Please uncomment the robot you would like to test and comment other robots out.
-# If you would like to try monte carlo robot, please go to line 28 and 38 to change battery and runs with few efforts. 
-# Note that the off-policy MC robot may take more than 2 hours to finish, but our report results are valid since we test 50 runs per robot.
+# If you would like to try monte carlo robot, please go to line 38 to change battery settings with few efforts. 
+# Note that the off-policy MC robot may take more than 2 hours to finish, but our report results are valid since we test 50 runs (line 28) per robot.
+# Please delete"_a" for each "robot_epoch_a" if you would like to run our original settings for experiments, which will take longer to finish.
 
 grid_file = 'house.grid'
 # Cleaned tile percentage at which the room is considered 'clean':
@@ -23,9 +23,9 @@ efficiencies = []
 n_moves = []
 deaths = 0
 cleaned = []
-# 50 runs per robot
+# 50 runs per robot in our report
 start_time = time.time()
-n = 50 # change "n = 10" in line 28 for MC robots for fewer runs to show the results.
+n = 10 # change "n = 50" to use original runs for our report. 
 for i in range(n):# change "range(10)" in line 30 for MC robots for fewer runs to show the results.
     # Open the grid file.
     # (You can create one yourself using the provided editor).
